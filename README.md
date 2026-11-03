@@ -28,6 +28,8 @@ npm run cli:validate   # 猫狗两册内容校验
 1. 首次使用先运行 `download-cloudflared.bat`：把 cloudflared 下载到 `tools/cloudflared.exe`（约 53 MB，只需一次，该二进制不入库）。
 2. 之后双击 `start-tunnel.bat`：它会复用已在运行的 `:3000` 服务（没有就自己起一个），打印形如 `https://xxx.trycloudflare.com` 的地址并复制到剪贴板。
 
+`start-tunnel.bat` 启动 `:3000` 服务时**默认走生产构建**：已有 `.next` 就直接 `npx next start -p 3000`，没有则先执行 `npm run build` 再启动，构建失败会停下且不建立隧道。生产构建的首屏资源远小于 dev 模式，朋友在微信里打开更快；需要热更新调试时请自己手写 `npm run dev`（同一时间只跑其中一种，二者会争用 `.next`）。
+
 隧道是临时的：关掉窗口即断，每次运行都会换一个新地址。长期分享请走部署，步骤见 [`AGENTS.md`](AGENTS.md) 的「部署」章节（EdgeOne Makers，构建 `npm run build`，输出 `.next`）。
 
 ## 分享卡怎么保存
