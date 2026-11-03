@@ -309,7 +309,7 @@ similarity = max(0, round((1 - distance / 30) * 100))
 - **反向邀请**：结果页直接提供「测我家另一只」，生成双宠对照链接（两个 base36 结果编码，见 §19.3）。
 - **结果链接分享**：结果页「分享结果」优先调用系统分享（`navigator.share`，标题 + 一句文案 + 结果 URL）；不可用或失败时降级为复制链接，成功与失败都有可见反馈；复制也失败时在页面上给出只读的结果 URL 输入框（点击全选），提示「长按选中链接后复制」。分享内容只含结果 URL（15 维向量），不含答案、压力分与历史记录；文案不暗示诊断。**URL 按物种构造**：猫 `/result/<code>`，狗 `/dog/result/<code>`。
 - **抓取预览**：猫 `/result/[code]` 与狗 `/dog/result/[code]` 各自用无状态 `generateMetadata` 按 code 生成 title/description 与 og/twitter 标签；文案来自对应物种的类型文案与锚点，标题带物种语境；非法 code 返回通用兜底 metadata。只做纯计算，不落盘、不写服务端状态。
-  - **社交封面**：结果页与根布局统一声明静态 `og:image` `/og-cover.png`（1200×630，含 `og:image:width/height/alt`），`twitter:card` 为 `summary_large_image`；图片是构建产物之外的静态资源，不随结果变化。
+  - **社交封面**：结果页与根布局声明静态 `og:image` `/og-cover.png`（1200×630，含 `og:image:width/height/alt`），`twitter:card` 为 `summary_large_image`；图片是构建产物之外的静态资源，不随结果变化。**仅在构建时配置 `NEXT_PUBLIC_SITE_URL` 才启用**：项目没有正式域名（公网域名需备案），默认构建不设 `metadataBase`、不输出任何占位或 localhost 域名，因此社交平台的链接预览不可用，`og-cover.png` 只是静态资源。metadata 不从请求 host 推导，首页保持静态化。
 - **不做的**：不设排行榜、不做签到、不做账号、不做付费墙。**所有结果永久免费完整可见** —— 这是我们与「基础免费 + 完整报告付费」（mypetvillage、Pup Personality）明确对立的选择。
 
 ---

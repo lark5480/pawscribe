@@ -3,6 +3,7 @@ import { decodeVector } from './codec';
 import { matchType } from './matching';
 import { resolveTypeCopy } from './result';
 import { getSpeciesData } from './data';
+import { siteConfig } from '../site';
 import type { Species } from './types';
 
 // 静态社交封面：1200×630，放在 public/og-cover.png
@@ -45,11 +46,23 @@ export function buildResultMetadata(code: string, species: Species): Metadata {
     const title = parts.join(' · ');
     const description =
       '猫狗性格志：给猫和狗一份会随时间变化的性格档案。' + (copy.hook ? ' ' + copy.hook : copy.note ? ' ' + copy.note : '');
+    // 未配置公网域名时不声明封面图，避免产出 localhost 一类假绝对地址
+    const hasSiteUrl = Boolean(siteConfig.url);
     return {
       title,
       description,
-      openGraph: { title, description, type: 'website', images: [OG_IMAGE] },
-      twitter: { card: 'summary_large_image', title, description, images: ['/og-cover.png'] },
+      openGraph: {
+        title,
+        description,
+        type: 'website',
+        ...(hasSiteUrl ? { images: [OG_IMAGE] } : {}),
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+        ...(hasSiteUrl ? { images: [OG_IMAGE.url] } : {}),
+      },
     };
   } catch {
     return fallbackMetadata(species);

@@ -2,8 +2,11 @@ import type { Metadata } from 'next';
 import { siteConfig } from '@/lib/site';
 import './globals.css';
 
+// 只有配置了公网域名才启用 metadataBase；未配置时不设，也不退回任何假域名。
+const siteUrl = siteConfig.url;
+
 export const metadata: Metadata = {
-  metadataBase: new URL(siteConfig.url),
+  metadataBase: siteUrl ? new URL(siteUrl) : undefined,
   title: siteConfig.name,
   description: siteConfig.description,
   openGraph: {
@@ -11,13 +14,13 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     type: 'website',
     locale: 'zh_CN',
-    images: [siteConfig.ogImage],
+    ...(siteUrl ? { images: [siteConfig.ogImage] } : {}),
   },
   twitter: {
     card: 'summary_large_image',
     title: siteConfig.name,
     description: siteConfig.description,
-    images: [siteConfig.ogImage.url],
+    ...(siteUrl ? { images: [siteConfig.ogImage.url] } : {}),
   },
 };
 

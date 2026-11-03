@@ -1,9 +1,10 @@
-// 站点唯一权威源：分享卡与 metadata 的绝对地址都从这里取，避免散落硬编码
-// 待替换为正式域名
+// 站点共享 metadata 的唯一权威源，避免散落硬编码。
+// 项目没有正式域名（需备案）：只有部署时配置 NEXT_PUBLIC_SITE_URL 才启用 metadataBase；
+// 未配置时不设 metadataBase，也不退回任何占位域名，社交分享预览不可用。
 export const siteConfig = {
   name: '猫狗性格志',
   description: '45 题，给你的猫或狗一份会随时间变化的性格档案',
-  url: 'https://pawscribe.example.com',
+  url: process.env.NEXT_PUBLIC_SITE_URL,
   ogImage: {
     url: '/og-cover.png',
     width: 1200,
