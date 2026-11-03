@@ -21,7 +21,28 @@ const MIN_DIST = 4;
 function decode(code: number): number[] { const d: number[] = []; for (let i = 0; i < 15; i++) d.push((code >> (i * 2)) & 3); return d; }
 function encode(dims: number[]): number { let c = 0; for (let i = 0; i < 15; i++) c |= (dims[i] & 3) << (i * 2); return c; }
 function isPlausible(code: number): boolean { const d = decode(code); if (d[0]===2&&d[1]===2) return false; if (d[0]===2&&d[2]===0) return false; if (d[12]===2&&d[13]===2) return false; if (d[6]===0&&d[8]===2) return false; return true; }
-function getSeeds(): number[] { return [0, 0x2AAAAAAA, 0x2A, 0x2A<<6, 0x2A<<12, 0x2A<<18, 0x2A<<24]; }
+// 16 型向量是内容合同的一部分，固定种子保证 cli:types 不会把已审核的模板换回旧版
+const FIXED_VECTOR_STRINGS = [
+  'LLLLLLLLLLLLLLL',
+  'HHHHHHHHHHHHHHH',
+  'HHHLLLLLLLLLLLL',
+  'LLLHHHLLLLLLLLL',
+  'LLLLLLHHHLLLLLL',
+  'LLLLLLLLLHHHLLL',
+  'LLLLLLLLLLLLHHH',
+  'LLLLLHLLLHLHLHL',
+  'LLMLLMHLLLLHLLL',
+  'LHLLLLMLLMLLLLL',
+  'LHLHHLLHHMHMMMM',
+  'HLHLHHHHLMLHLLM',
+  'HHLLHLHLHHLHLHL',
+  'LLHHLHLLHHLHHMM',
+  'HHLMLLHHLLLHHLH',
+  'HLHHHMHLLHHLLHL',
+];
+function getSeeds(): number[] {
+  return FIXED_VECTOR_STRINGS.map((s) => encode([...s].map((c) => (c === 'L' ? 0 : c === 'M' ? 1 : 2))));
+}
 function mulberry32(seed: number) { return function() { let t = seed += 0x6D2B79F5; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 function manhattanArr(a: number[], b: number[]): number { let d = 0; for (let i = 0; i < 15; i++) d += Math.abs(a[i] - b[i]); return d; }
 

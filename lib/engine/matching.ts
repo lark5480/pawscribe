@@ -36,6 +36,8 @@ export function matchType(
   // 精确命中 16 型模板时以模板为准；隐藏型只在未精确命中（距离 ≥ 1）时触发
   const hidden = bestDist >= 1 && isHiddenType(vector, species);
   const copy = copies[best];
+  // 相似度是整数：距离 12 → 60%，距离 13 → 57%。阈值 60 对应 d≥13；
+  // 若放宽到 <61，会把 d=12 一并兜底（45 题量表下约 5.5%），故保持 60。
   const isFallback = !hidden && similarity < 60;
   return {
     typeIndex: best,

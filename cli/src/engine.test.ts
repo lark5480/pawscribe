@@ -243,7 +243,7 @@ test('兜底型替换 16 型文案', () => {
 });
 
 test('真实 16 型模板下也存在相似度 <60 的向量', () => {
-  const vector = [0, 2, 2, 0, 1, 2, 0, 2, 2, 2, 0, 0, 0, 2, 0] as Vector;
+  const vector = [2, 1, 1, 0, 0, 2, 0, 1, 1, 2, 2, 0, 1, 2, 2] as Vector;
   const match = matchType(vector, templates, copies);
   assert.equal(match.similarity, 57);
   assert.equal(match.isFallback, true);
