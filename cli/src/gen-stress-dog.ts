@@ -1,0 +1,62 @@
+const fs = require('fs');
+const stress = {
+  indicators: [
+    {
+      id: 'S1',
+      name: '分离相关表现',
+      source: 'Flannigan & Dodman 2001（JAVMA 219:460-466）',
+      pending: '',
+    },
+    {
+      id: 'S2',
+      name: '过度舔咬自身与重复行为',
+      source: 'Overall & Dunham 2002（JAVMA 221:1445-1452）',
+      pending: '过度舔咬自身的独立流行病学数据待补文献',
+    },
+  ],
+  questions: [
+    {
+      id: 201,
+      indicator: 'S1',
+      q: '过去一个月，它独自在家时，是否出现拆咬门框、家具或物品的情况？',
+      options: ['没有', '偶尔（1-2 次）', '经常（3 次以上，或每次独处都发生）'],
+      scores: [0, 50, 100],
+    },
+    {
+      id: 202,
+      indicator: 'S1',
+      q: '过去一个月，它独自在家时，持续吠叫或嚎叫的情况是？',
+      options: ['没有', '偶尔听到，或邻居偶尔提到', '经常持续，邻居多次提到'],
+      scores: [0, 50, 100],
+    },
+    {
+      id: 203,
+      indicator: 'S2',
+      q: '过去一个月，它舔咬自己身体（如爪子、腹部、尾巴根）的情况是？',
+      options: ['和平时差不多', '比平时多，但皮肤没有明显变化', '频繁舔咬同一部位，毛发变稀或皮肤发红'],
+      scores: [0, 50, 100],
+    },
+    {
+      id: 204,
+      indicator: 'S2',
+      q: '过去一个月，它有没有在无明显原因时重复同一个动作（如转圈、追尾巴、咬空气、反复舔同一处）？',
+      options: ['没有', '偶尔，能被打断', '经常，难以打断，影响吃睡或活动'],
+      scores: [0, 50, 100],
+    },
+  ],
+  levels: [
+    {
+      level: 'normal',
+      label: '正常范围',
+      text: '你的狗目前没有明显的压力信号。继续保持稳定的日常作息和环境，定期观察它的行为变化。',
+    },
+    {
+      level: 'attention',
+      label: '建议关注',
+      text: '你的狗在过去一段时间出现了一些压力信号。建议你咨询兽医或动物行为专业人士，获得针对性的建议和帮助。',
+    },
+  ],
+  scoring: '4 题各 0/50/100，总分 0-100；0-49 为正常范围，50-100 为建议关注。压力指数不进入 15 维向量，不参与类型匹配。',
+};
+fs.writeFileSync('./content/stress-dog.json', JSON.stringify(stress, null, 2));
+console.log('saved stress-dog.json:', stress.questions.length, 'questions');

@@ -1,0 +1,20 @@
+const fs = require('fs');
+const stress = {
+  indicators: [
+    { id: 'S1', name: '不当位置排泄', source: '赫尔辛基 2021 Litterbox issues' },
+    { id: 'S2', name: '过度舔毛', source: '赫尔辛基 2021 Excessive grooming' },
+  ],
+  questions: [
+    { id: 101, indicator: 'S1', q: '最近一个月，它在猫砂盆外排泄的次数是？', options: ['没有', '偶尔（1-2 次）', '频繁（3 次以上）'], scores: [0, 50, 100] },
+    { id: 102, indicator: 'S1', q: '它排泄的位置通常是？', options: ['猫砂盆', '偶尔在猫砂盆附近', '固定在某个非猫砂盆位置（如床上、沙发）'], scores: [0, 50, 100] },
+    { id: 103, indicator: 'S2', q: '最近一个月，它舔毛的频繁程度是？', options: ['正常，和其他猫差不多', '比平时多，但皮肤没有明显问题', '频繁舔某个部位，导致毛发稀疏或皮肤发红'], scores: [0, 50, 100] },
+    { id: 104, indicator: 'S2', q: '它舔毛的时间通常是？', options: ['正常，饭后或睡前', '比平时长，但能被打断', '长时间舔，难以打断，影响正常活动'], scores: [0, 50, 100] },
+  ],
+  levels: [
+    { level: 'normal', label: '正常范围', text: '你的猫目前没有明显的压力信号。继续保持稳定的日常作息和环境，定期观察它的行为变化。' },
+    { level: 'attention', label: '建议关注', text: '你的猫最近表现出一些压力信号。这些信号可能与环境和日常变化有关，也可能与健康状况有关。建议你咨询兽医或动物行为专业人士，获得针对性的建议和帮助。' },
+  ],
+  scoring: '4 题各 0/50/100，总分 0-100；0-49 为正常范围，50-100 为建议关注。压力指数不进入 15 维向量，不参与类型匹配。',
+};
+fs.writeFileSync('./content/stress-cat.json', JSON.stringify(stress, null, 2));
+console.log('saved stress-cat.json');

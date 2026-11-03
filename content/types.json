@@ -1,0 +1,564 @@
+{
+  "dimensions": [
+    {
+      "id": "D1",
+      "model": "M1",
+      "name": "大胆度",
+      "lowDesc": "躲着走",
+      "highDesc": "主动凑近"
+    },
+    {
+      "id": "D2",
+      "model": "M1",
+      "name": "惊惧敏感度",
+      "lowDesc": "雷声无反应",
+      "highDesc": "炸毛躲藏"
+    },
+    {
+      "id": "D3",
+      "model": "M1",
+      "name": "恢复力",
+      "lowDesc": "半天回不来",
+      "highDesc": "一惊即过"
+    },
+    {
+      "id": "D4",
+      "model": "M2",
+      "name": "日常活动量",
+      "lowDesc": "整天睡",
+      "highDesc": "停不下来"
+    },
+    {
+      "id": "D5",
+      "model": "M2",
+      "name": "新奇探索欲",
+      "lowDesc": "先躲",
+      "highDesc": "立刻拆扑"
+    },
+    {
+      "id": "D6",
+      "model": "M2",
+      "name": "专注持久度",
+      "lowDesc": "玩两下就走",
+      "highDesc": "咬着不放"
+    },
+    {
+      "id": "D7",
+      "model": "M3",
+      "name": "对人依恋亲近",
+      "lowDesc": "你回来它照旧睡",
+      "highDesc": "时刻踩奶"
+    },
+    {
+      "id": "D8",
+      "model": "M3",
+      "name": "同类社交",
+      "lowDesc": "见同类炸毛",
+      "highDesc": "主动凑过去"
+    },
+    {
+      "id": "D9",
+      "model": "M3",
+      "name": "社交主动性",
+      "lowDesc": "客人来就躲",
+      "highDesc": "第一个冲过去"
+    },
+    {
+      "id": "D10",
+      "model": "M4",
+      "name": "独立自主",
+      "lowDesc": "贴着人走",
+      "highDesc": "大部分时间自己待"
+    },
+    {
+      "id": "D11",
+      "model": "M4",
+      "name": "领地与护食",
+      "lowDesc": "资源被碰就走",
+      "highDesc": "死死护住抢食"
+    },
+    {
+      "id": "D12",
+      "model": "M4",
+      "name": "变动耐受",
+      "lowDesc": "换家具就乱",
+      "highDesc": "搬到哪都照样吃睡"
+    },
+    {
+      "id": "D13",
+      "model": "M5",
+      "name": "易激惹度",
+      "lowDesc": "被冒犯会走开",
+      "highDesc": "咬抓扑"
+    },
+    {
+      "id": "D14",
+      "model": "M5",
+      "name": "挫折耐受",
+      "lowDesc": "得不到就放弃",
+      "highDesc": "反复尝试叫扒砸"
+    },
+    {
+      "id": "D15",
+      "model": "M5",
+      "name": "冲动性",
+      "lowDesc": "先观望很久",
+      "highDesc": "立刻扑抢冲"
+    }
+  ],
+  "types": [
+    {
+      "index": 0,
+      "vector": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "vectorStr": "LLLLLLLLLLLLLLL"
+    },
+    {
+      "index": 1,
+      "vector": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "vectorStr": "HHHHHHHHHHHHHHH"
+    },
+    {
+      "index": 2,
+      "vector": [
+        2,
+        2,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "vectorStr": "HHHLLLLLLLLLLLL"
+    },
+    {
+      "index": 3,
+      "vector": [
+        0,
+        0,
+        0,
+        2,
+        2,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "vectorStr": "LLLHHHLLLLLLLLL"
+    },
+    {
+      "index": 4,
+      "vector": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        2,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "vectorStr": "LLLLLLHHHLLLLLL"
+    },
+    {
+      "index": 5,
+      "vector": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        2,
+        2,
+        0,
+        0,
+        0
+      ],
+      "vectorStr": "LLLLLLLLLHHHLLL"
+    },
+    {
+      "index": 6,
+      "vector": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        2,
+        2
+      ],
+      "vectorStr": "LLLLLLLLLLLLHHH"
+    },
+    {
+      "index": 7,
+      "vector": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        0
+      ],
+      "vectorStr": "MMMMMMMMMMMMHML"
+    },
+    {
+      "index": 8,
+      "vector": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        2,
+        1
+      ],
+      "vectorStr": "MMMMMMMMMLMMMHM"
+    },
+    {
+      "index": 9,
+      "vector": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        2
+      ],
+      "vectorStr": "MMMMMMMMMMMLMMH"
+    },
+    {
+      "index": 10,
+      "vector": [
+        0,
+        2,
+        0,
+        2,
+        2,
+        0,
+        0,
+        2,
+        2,
+        1,
+        2,
+        1,
+        1,
+        1,
+        1
+      ],
+      "vectorStr": "LHLHHLLHHMHMMMM"
+    },
+    {
+      "index": 11,
+      "vector": [
+        2,
+        0,
+        2,
+        0,
+        2,
+        2,
+        2,
+        2,
+        0,
+        1,
+        0,
+        2,
+        0,
+        0,
+        1
+      ],
+      "vectorStr": "HLHLHHHHLMLHLLM"
+    },
+    {
+      "index": 12,
+      "vector": [
+        2,
+        2,
+        0,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0
+      ],
+      "vectorStr": "HHLLHLHLHHLHLHL"
+    },
+    {
+      "index": 13,
+      "vector": [
+        0,
+        0,
+        2,
+        2,
+        0,
+        2,
+        0,
+        0,
+        2,
+        2,
+        0,
+        2,
+        2,
+        1,
+        1
+      ],
+      "vectorStr": "LLHHLHLLHHLHHMM"
+    },
+    {
+      "index": 14,
+      "vector": [
+        2,
+        2,
+        0,
+        1,
+        0,
+        0,
+        2,
+        2,
+        0,
+        0,
+        0,
+        2,
+        2,
+        0,
+        2
+      ],
+      "vectorStr": "HHLMLLHHLLLHHLH"
+    },
+    {
+      "index": 15,
+      "vector": [
+        2,
+        0,
+        2,
+        2,
+        2,
+        1,
+        2,
+        0,
+        0,
+        2,
+        2,
+        0,
+        0,
+        2,
+        0
+      ],
+      "vectorStr": "HLHHHMHLLHHLLHL"
+    }
+  ],
+  "stats": {
+    "poolSize": 198649,
+    "minPairDistance": 4,
+    "dimensionDistribution": [
+      {
+        "dimension": "D1",
+        "L": 7,
+        "M": 3,
+        "H": 6
+      },
+      {
+        "dimension": "D2",
+        "L": 8,
+        "M": 3,
+        "H": 5
+      },
+      {
+        "dimension": "D3",
+        "L": 8,
+        "M": 3,
+        "H": 5
+      },
+      {
+        "dimension": "D4",
+        "L": 7,
+        "M": 4,
+        "H": 5
+      },
+      {
+        "dimension": "D5",
+        "L": 7,
+        "M": 3,
+        "H": 6
+      },
+      {
+        "dimension": "D6",
+        "L": 8,
+        "M": 4,
+        "H": 4
+      },
+      {
+        "dimension": "D7",
+        "L": 7,
+        "M": 3,
+        "H": 6
+      },
+      {
+        "dimension": "D8",
+        "L": 8,
+        "M": 3,
+        "H": 5
+      },
+      {
+        "dimension": "D9",
+        "L": 8,
+        "M": 3,
+        "H": 5
+      },
+      {
+        "dimension": "D10",
+        "L": 7,
+        "M": 4,
+        "H": 5
+      },
+      {
+        "dimension": "D11",
+        "L": 9,
+        "M": 3,
+        "H": 4
+      },
+      {
+        "dimension": "D12",
+        "L": 7,
+        "M": 3,
+        "H": 6
+      },
+      {
+        "dimension": "D13",
+        "L": 8,
+        "M": 3,
+        "H": 5
+      },
+      {
+        "dimension": "D14",
+        "L": 7,
+        "M": 4,
+        "H": 5
+      },
+      {
+        "dimension": "D15",
+        "L": 8,
+        "M": 4,
+        "H": 4
+      }
+    ],
+    "coverage": {
+      "typesFor90": 13,
+      "coverage": [
+        5491,
+        8780,
+        6775,
+        6262,
+        6122,
+        6668,
+        4674,
+        50760,
+        31950,
+        25869,
+        9664,
+        9294,
+        6316,
+        8636,
+        5758,
+        5630
+      ]
+    }
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "dimensions": [
+    {
+      "id": "D1",
+      "source": "Turcsán 2009「boldness」 · DPQ「Fearfulness」反向",
+      "note": "boldness 拆为 D1/D2/D3 三维：Volhard 与 BreedTools 本就分开测量 Stability 与 Recovery"
+    },
+    {
+      "id": "D2",
+      "source": "DPQ「Fear of Handling / Sound」",
+      "note": ""
+    },
+    {
+      "id": "D3",
+      "source": "Volhard PAT「Stability」 · BreedTools「Recovery」",
+      "note": ""
+    },
+    {
+      "id": "D4",
+      "source": "DPQ「Excitability」",
+      "note": ""
+    },
+    {
+      "id": "D5",
+      "source": "DPQ「Active Engagement」",
+      "note": ""
+    },
+    {
+      "id": "D6",
+      "source": "DPQ「Active Engagement」",
+      "note": ""
+    },
+    {
+      "id": "D7",
+      "source": "DPQ「Companionability」 · Turcsán 2009「sociability」",
+      "note": "社交拆为对主人 / 对同类 / 对陌生人三维，保留「黏主人但怕生人」的组合信息"
+    },
+    {
+      "id": "D8",
+      "source": "DPQ「Aggression to dogs」反向",
+      "note": "单宠家庭使用遛弯、宠物医院等场景作答"
+    },
+    {
+      "id": "D9",
+      "source": "DPQ「Social attraction」",
+      "note": ""
+    },
+    {
+      "id": "D10",
+      "source": "DPQ「Nonsocial fear」反向 · 狗的独立性（待补文献）",
+      "note": ""
+    },
+    {
+      "id": "D11",
+      "source": "DPQ「Situational aggression」",
+      "note": "狗册的 D11 同时覆盖个人空间与护食两类语义"
+    },
+    {
+      "id": "D12",
+      "source": "DPQ「adapts easily」反向 · 环境变化与狗的行为（待补文献）",
+      "note": ""
+    },
+    {
+      "id": "D13",
+      "source": "DPQ「General aggression」",
+      "note": ""
+    },
+    {
+      "id": "D14",
+      "source": "动物福利研究（挫折诱发攻击与 redirected aggression；具体条目待补文献）",
+      "note": ""
+    },
+    {
+      "id": "D15",
+      "source": "Volhard PAT「Elevation」",
+      "note": ""
+    }
+  ],
+  "references": [
+    {
+      "label": "Turcsán 2009",
+      "detail": "Turcsán / Kubinyi / Miklósi. Dog and owner demographic characteristics and dog personality trait associations. Behavioural Processes 81(3):392–401. 14004 只狗。"
+    },
+    {
+      "label": "DPQ（Dog Personality Questionnaire）",
+      "detail": "Jones 2008 简版；Riemer et al. 2016, Applied Animal Behaviour Science 180:78–86 附表。5 因子 / 16 facet。"
+    },
+    {
+      "label": "Volhard PAT · BreedTools",
+      "detail": "Volhard PAT 含 Stability 等 10 项；BreedTools 5 维含 Recovery。二者把 Stability 与 Recovery 分开测量。"
+    },
+    {
+      "label": "动物福利研究",
+      "detail": "挫折诱发攻击与 redirected aggression 的相关研究；具体条目待补文献。"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+node_modules/
+.next/
+.next-dev/
+.next-e2e/
+.next-online/
+out/
+dist/
+*.tsbuildinfo
+*.log
+.DS_Store
+.env*.local
+.env
+cloudflared.exe
+tools/cloudflared.exe

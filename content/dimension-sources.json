@@ -1,0 +1,105 @@
+{
+  "dimensions": [
+    {
+      "id": "D1",
+      "source": "赫尔辛基 2021「Fearfulness」反向 · Turcsán 2009「boldness」",
+      "note": "boldness 拆为 D1/D2/D3 三维：Volhard 与 BreedTools 本就分开测量 Stability 与 Recovery"
+    },
+    {
+      "id": "D2",
+      "source": "赫尔辛基 2021「Fearfulness」 · DPQ「Fear of Handling / Sound」",
+      "note": ""
+    },
+    {
+      "id": "D3",
+      "source": "Volhard PAT「Stability」 · BreedTools「Recovery」",
+      "note": ""
+    },
+    {
+      "id": "D4",
+      "source": "赫尔辛基 2021「Activity / playfulness」 · DPQ「Excitability」",
+      "note": ""
+    },
+    {
+      "id": "D5",
+      "source": "斑马雀 exploration（Barrett et al.） · DPQ「Active Engagement」",
+      "note": ""
+    },
+    {
+      "id": "D6",
+      "source": "斑马雀 persistence（Barrett et al.） · DPQ「Active Engagement」",
+      "note": ""
+    },
+    {
+      "id": "D7",
+      "source": "赫尔辛基 2021「Sociability to humans」 · DPQ「Companionability」",
+      "note": "社交拆为对主人 / 对同类 / 对陌生人三维，保留「黏主人但怕生人」的组合信息"
+    },
+    {
+      "id": "D8",
+      "source": "赫尔辛基 2021「Sociability to cats」 · DPQ「Aggression to dogs」反向",
+      "note": "单宠家庭使用宠物医院、小区偶遇同类等场景作答"
+    },
+    {
+      "id": "D9",
+      "source": "赫尔辛基 2021「Sociability to humans」 · DPQ「Social attraction」",
+      "note": ""
+    },
+    {
+      "id": "D10",
+      "source": "DPQ「Nonsocial fear」反向 · 猫的独立性",
+      "note": ""
+    },
+    {
+      "id": "D11",
+      "source": "赫尔辛基 2021「Aggression to humans」 · DPQ「Situational aggression」",
+      "note": ""
+    },
+    {
+      "id": "D12",
+      "source": "赫尔辛基 2021（环境反复变化是猫的压力源） · DPQ「adapts easily」反向",
+      "note": ""
+    },
+    {
+      "id": "D13",
+      "source": "赫尔辛基 2021「Aggression to humans」 · DPQ「General aggression」",
+      "note": ""
+    },
+    {
+      "id": "D14",
+      "source": "动物福利研究（挫折诱发攻击与 redirected aggression）",
+      "note": ""
+    },
+    {
+      "id": "D15",
+      "source": "Feline Five 2017「Impulsiveness」 · Volhard PAT「Elevation」",
+      "note": ""
+    }
+  ],
+  "references": [
+    {
+      "label": "赫尔辛基大学 2021",
+      "detail": "Mikkola S, Salonen M, Hakanen E, Sulkama S, Lohi H. Reliability and Validity of Seven Feline Behavior and Personality Traits. Animals (Basel). 2021;7(11):1991. 4300+ 只猫、26 个品种组、138 条陈述、7 项因子。"
+    },
+    {
+      "label": "Feline Five 2017",
+      "detail": "约 3000 只家猫问卷，五因子：Neuroticism / Extraversion / Dominance / Impulsiveness / Agreeableness。"
+    },
+    {
+      "label": "DPQ（Dog Personality Questionnaire）",
+      "detail": "Jones 2008 简版；Riemer et al. 2016, Applied Animal Behaviour Science 180:78–86 附表。5 因子 / 16 facet。"
+    },
+    {
+      "label": "Volhard PAT · BreedTools",
+      "detail": "Volhard PAT 含 Stability 等 10 项；BreedTools 5 维含 Recovery。二者把 Stability 与 Recovery 分开测量。"
+    },
+    {
+      "label": "Turcsán 2009",
+      "detail": "Turcsán / Kubinyi / Miklósi. Dog and owner demographic characteristics and dog personality trait associations. Behavioural Processes 81(3):392–401. 14004 只狗。"
+    },
+    {
+      "label": "斑马雀追踪研究",
+      "detail": "Barrett et al., Royal Society Open Science。41 只、两年追踪；boldness 与 persistence 在两年内保持一致。"
+    }
+  ]
+}
