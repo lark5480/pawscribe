@@ -11,7 +11,7 @@
 ## 1. 技术栈
 
 Next.js 14 (App Router) · React 18 · TypeScript 5.5 · Tailwind 3
-运行时依赖**仅限** `zod` / `nanoid` / `lucide-react`（`react` / `react-dom` / `next` 是框架自带）；devDependency 仅额外 `@playwright/test` 用于 e2e，不进入客户端 bundle。
+运行时依赖**仅限** `zod` / `nanoid` / `lucide-react`（`react` / `react-dom` / `next` 是框架自带）；devDependency 仅额外 `@playwright/test` 用于 e2e，**不得进入运行时依赖，也不进入客户端 bundle**。
 状态一律用 React 自身 + localStorage，**没有状态库**。
 CLI 工具链用 Node 24 原生 TypeScript（`node cli/src/*.ts`），**不引入额外依赖**。
 
