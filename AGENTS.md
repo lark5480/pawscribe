@@ -11,7 +11,7 @@
 ## 1. 技术栈
 
 Next.js 14 (App Router) · React 18 · TypeScript 5.5 · Tailwind 3
-依赖**仅限** `zod` / `nanoid` / `lucide-react`（`react` / `react-dom` / `next` 是框架自带）。
+运行时依赖**仅限** `zod` / `nanoid` / `lucide-react`（`react` / `react-dom` / `next` 是框架自带）；devDependency 仅额外 `@playwright/test` 用于 e2e，不进入客户端 bundle。
 状态一律用 React 自身 + localStorage，**没有状态库**。
 CLI 工具链用 Node 24 原生 TypeScript（`node cli/src/*.ts`），**不引入额外依赖**。
 
@@ -88,6 +88,7 @@ npm run typecheck
 npm test
 npm run build
 npm run cli:validate     # 猫狗两册内容校验
+npm run test:e2e         # Playwright Chromium 冒烟（需先 build）
 
 # CLI 工具链
 npm run cli:types                    # 生成 16 型，输出到 stdout
@@ -100,7 +101,8 @@ npm run cli:stress:dog               # 生成/校验狗册压力信号
 npm run cli:advice:dog               # 生成/校验狗册比较建议
 ```
 
-仓库没有 ESLint 配置，**不存在可用的 `npm run lint`**；自检请用 `typecheck` + `test` + `build`。
+仓库没有 ESLint 配置，**不存在可用的 `npm run lint`**；自检请用 `typecheck` + `cli:validate` + `test` + `build`。
+CI：`.github/workflows/ci.yml` 在 push `main`/`dev` 与 PR `main` 时运行 verify（typecheck / cli:validate / test / build）与 e2e（Playwright Chromium）。
 
 ---
 

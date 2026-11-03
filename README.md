@@ -17,7 +17,7 @@ npm run build
 npm run cli:validate   # 猫狗两册内容校验
 ```
 
-> 仓库没有 ESLint 配置，**不存在可用的 `npm run lint`**；`package.json` 里的 lint 脚本无法完成校验。提交前用 `typecheck` + `test` + `build` 自检。
+> 仓库没有 ESLint 配置，**不存在可用的 `npm run lint`**；`package.json` 里的 lint 脚本无法完成校验。提交前用 `typecheck` + `cli:validate` + `test` + `build` 自检；e2e 需先 build，再跑 `npm run test:e2e`。
 
 ## 本地运行与临时分享
 
@@ -38,6 +38,7 @@ npm run cli:validate   # 猫狗两册内容校验
 | `npm run build` | 生产构建，输出 `.next` |
 | `npm run start` | 启动生产构建 |
 | `npm test` | 运行 `cli/src/engine.test.ts` |
+| `npm run test:e2e` | 运行 Playwright Chromium 冒烟（需先 `npm run build`） |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run cli:validate` | 校验猫册、狗册全部内容资产与禁用词 |
 | `npm run cli:types` | 生成 16 型向量，输出到 stdout（可重定向到 `content/types-raw.json`） |
@@ -94,6 +95,7 @@ docs/                PRD 与调研快照
 
 - 猫册与狗册均已开放：30 题 + 4 道压力题、16 型、类型库、维度页、轨迹与双宠对照。
 - 纯客户端；无账号、无数据库、无服务端状态。
+- CI：GitHub Actions 运行 verify（typecheck + 内容校验 + 单测 + build）与 Playwright Chromium 冒烟。
 - 部署：EdgeOne Makers（免费版），构建命令 `npm run build`，输出 `.next`。
 - 许可：MIT。
 
