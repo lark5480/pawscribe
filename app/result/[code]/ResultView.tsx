@@ -110,6 +110,8 @@ export default function ResultView({ code, species }: { code: string; species: S
   const [historyCount, setHistoryCount] = useState(0);
   const [historyNotice, setHistoryNotice] = useState<string | null>(null);
   const [shareNotice, setShareNotice] = useState<string | null>(null);
+  const [shareImage, setShareImage] = useState<{ url: string; filename: string } | null>(null);
+  const [manualUrl, setManualUrl] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const vector = decodeVector(code);
 
@@ -208,19 +210,25 @@ export default function ResultView({ code, species }: { code: string; species: S
     ctx.fillText(line, x, yy);
   }
 
+  // 生成 PNG 后在页面上展示：微信内置浏览器会拦截 <a download>，长按保存才是主路径
   function saveCard() {
     drawShareCard();
     const canvas = canvasRef.current;
     if (!canvas) return;
-    canvas.toBlob((blob) => {
-      if (!blob) return;
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'pawscribe-' + (copy.code || 'special') + '.png';
-      a.click();
-      URL.revokeObjectURL(url);
+    setShareImage({
+      url: canvas.toDataURL('image/png'),
+      filename: 'pawscribe-' + (copy.code || 'special') + '.png',
     });
+    setManualUrl(null);
+  }
+
+  // 桌面端次级操作：仅在有图片后可用
+  function downloadCard() {
+    if (!shareImage) return;
+    const a = document.createElement('a');
+    a.href = shareImage.url;
+    a.download = shareImage.filename;
+    a.click();
   }
 
   // 分享内容只带结果 URL：不含答案、压力分、历史记录
@@ -240,9 +248,11 @@ export default function ResultView({ code, species }: { code: string; species: S
     }
     const ok = await copyLink(url);
     if (ok) {
+      setManualUrl(null);
       setShareNotice('链接已复制，分享给朋友即可在猫狗性格志查看同一个结果');
     } else {
-      setShareNotice('复制失败，请长按地址栏手动复制链接');
+      setManualUrl(url);
+      setShareNotice('复制失败，请长按下方地址手动复制；也可长按结果页地址栏复制');
     }
   }
 
@@ -326,6 +336,39 @@ export default function ResultView({ code, species }: { code: string; species: S
 
       {shareNotice && (
         <p className="mt-3 text-center text-xs leading-relaxed text-stone-500">{shareNotice}</p>
+      )}
+
+      {manualUrl && (
+        <div className="mt-3">
+          <input
+            readOnly
+            aria-label="结果链接"
+            value={manualUrl}
+            onClick={(e) => e.currentTarget.select()}
+            onFocus={(e) => e.currentTarget.select()}
+            className="w-full rounded-xl border border-stone-300 bg-stone-50 px-3 py-2 text-xs text-stone-600"
+          />
+          <p className="mt-1 text-center text-xs text-stone-500">长按上方文字选中链接后复制</p>
+        </div>
+      )}
+
+      {shareImage && (
+        <div className="mt-6 rounded-2xl border border-stone-200 bg-white p-4">
+          <img
+            src={shareImage.url}
+            alt={'分享卡：' + copy.name}
+            className="w-full rounded-xl border border-stone-200"
+          />
+          <p className="mt-3 text-center text-xs leading-relaxed text-stone-600">
+            长按图片保存 / 转发给朋友
+          </p>
+          <button
+            onClick={downloadCard}
+            className="mt-3 w-full rounded-full border border-stone-300 px-6 py-3 text-center font-medium text-stone-700 transition hover:bg-stone-100"
+          >
+            下载到本地
+          </button>
+        </div>
       )}
 
       <a href={'/test?' + (species === 'dog' ? 'species=dog&' : '') + 'pair=' + code} className="mt-3 block rounded-full border border-stone-300 px-6 py-3 text-center font-medium text-stone-700 transition hover:bg-stone-100">

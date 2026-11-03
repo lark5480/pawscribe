@@ -5,6 +5,14 @@ import { resolveTypeCopy } from './result';
 import { getSpeciesData } from './data';
 import type { Species } from './types';
 
+// 静态社交封面：1200×630，放在 public/og-cover.png
+const OG_IMAGE = {
+  url: '/og-cover.png',
+  width: 1200,
+  height: 630,
+  alt: '《猫狗性格志》分享封面：暖纸色背景上，左侧为「猫狗性格志」主标题与「30 题，给你的猫或狗一份会随时间变化的性格档案」副标题，右侧圆牌内并排猫与狗的线描图标。',
+};
+
 function fallbackMetadata(species: Species): Metadata {
   const ready = getSpeciesData(species) !== null;
   const title = ready ? '结果不存在 · 猫狗性格志' : '狗册准备中 · 猫狗性格志';
@@ -40,8 +48,8 @@ export function buildResultMetadata(code: string, species: Species): Metadata {
     return {
       title,
       description,
-      openGraph: { title, description, type: 'website' },
-      twitter: { card: 'summary', title, description },
+      openGraph: { title, description, type: 'website', images: [OG_IMAGE] },
+      twitter: { card: 'summary_large_image', title, description, images: ['/og-cover.png'] },
     };
   } catch {
     return fallbackMetadata(species);
