@@ -85,14 +85,14 @@ test('复制与系统分享都不可用时，展示可手动复制的链接', as
   await expect(page.getByText('长按上方文字选中链接后复制')).toBeVisible();
 });
 
-test('猫册测试流可完成 34 步并落到结果页', async ({ page }) => {
+test('猫册测试流可完成 49 步并落到结果页', async ({ page }) => {
   const pageErrors: string[] = [];
   page.on('pageerror', (err) => pageErrors.push(err.message));
 
   await page.goto('/test');
-  await expect(page.getByText(/第 1 \/ 30 题/)).toBeVisible();
+  await expect(page.getByText(/第 1 \/ 45 题/)).toBeVisible();
 
-  for (let i = 0; i < 34; i++) {
+  for (let i = 0; i < 49; i++) {
     const option = page.locator('main button').filter({ hasNotText: '上一题' }).first();
     await expect(option).toBeVisible();
     await option.click();

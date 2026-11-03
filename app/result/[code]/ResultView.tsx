@@ -235,7 +235,7 @@ export default function ResultView({ code, species }: { code: string; species: S
   async function shareLink() {
     const url = window.location.origin + resultBase + code;
     const title = '我家的毛孩是「' + copy.name + '」 · 猫狗性格志';
-    const text = '我在猫狗性格志用 30 题给毛孩做了份性格档案，测一测你家毛孩是什么类型。';
+    const text = '我在猫狗性格志用 45 题给毛孩做了份性格档案，测一测你家毛孩是什么类型。';
     if (navigator.share && typeof navigator.share === 'function') {
       try {
         await navigator.share({ title, text, url });

@@ -1,6 +1,6 @@
 # pawscribe · 猫狗性格志
 
-**30 题，给你的猫或狗一份会随时间变化的性格档案。**
+**45 题，给你的猫或狗一份会随时间变化的性格档案。**
 
 `Next.js 14` · `React 18` · `TypeScript` · `Tailwind 3` · `EdgeOne Makers`
 
@@ -48,7 +48,7 @@ npm run cli:validate   # 猫狗两册内容校验
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run cli:validate` | 校验猫册、狗册全部内容资产与禁用词 |
 | `npm run cli:types` | 生成 16 型向量，输出到 stdout（可重定向到 `content/types-raw.json`） |
-| `npm run cli:quiz` / `npm run cli:quiz:dog` | 生成/校验猫册、狗册 30 题 |
+| `npm run cli:quiz` / `npm run cli:quiz:dog` | 生成/校验猫册、狗册 45 题 |
 | `npm run cli:copy` / `npm run cli:copy:dog` | 生成/校验猫册、狗册 16 型文案 |
 | `npm run cli:stress` / `npm run cli:stress:dog` | 生成/校验猫册、狗册压力题 |
 | `npm run cli:advice:dog` | 生成/校验狗册比较建议 |
@@ -72,7 +72,7 @@ npm run cli:validate   # 猫狗两册内容校验
 ## 猫册与狗册的边界
 
 - 两册共用 15 维、计分、匹配、base36 编码与 16 型向量。
-- 30 题、15 维 L/H 锚点、16 型代码 / 名称 / 钩子 / 建议 / 品种参考、4 道压力题与两档文案、比较建议，均按物种各存一份。
+- 45 题、15 维 L/H 锚点、16 型代码 / 名称 / 钩子 / 建议 / 品种参考、4 道压力题与两档文案、比较建议，均按物种各存一份。
 - 物种由入口决定：`/test` 默认猫册，`/test?species=dog` 走狗册；结果路径分别为 `/result/<code>` 与 `/dog/result/<code>`。
 - 本机状态按物种隔离：进度 `pawscribe-progress-v3` / `pawscribe-progress-v3:dog`；压力分 `pawscribe-stress:cat` / `pawscribe-stress:dog`；历史按 `species + petId` 计数（`cat-default` / `dog-default`），每个组合最多 20 条，猫狗互不挤占。
 - 身份模型为 v1.1 单宠单档案；历史只存当前浏览器，不上传、不导出。
@@ -99,7 +99,7 @@ docs/                PRD 与调研快照
 
 ## 状态
 
-- 猫册与狗册均已开放：30 题 + 4 道压力题、16 型、类型库、维度页、轨迹与双宠对照。
+- 猫册与狗册均已开放：45 题 + 4 道压力题、16 型、类型库、维度页、轨迹与双宠对照。
 - 纯客户端；无账号、无数据库、无服务端状态。
 - CI：GitHub Actions 运行 verify（typecheck + 内容校验 + 单测 + build）与 Playwright Chromium 冒烟。
 - 部署：EdgeOne Makers（免费版），构建命令 `npm run build`，输出 `.next`。

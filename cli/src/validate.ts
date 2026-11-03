@@ -63,7 +63,7 @@ const dogStressErrors = dogStressData
 const dogAdviceErrors = dogAdviceData ? validateCompareAdvice(dogAdviceData, CAT_SPECIFIC_WORDS) : [];
 
 console.log('=== 题库校验 ===');
-if (quizErrors.length === 0) console.log('OK：30 题全部通过');
+if (quizErrors.length === 0) console.log('OK：45 题全部通过');
 else quizErrors.forEach(e => console.log('ERROR:', e));
 
 console.log('\n=== 文案校验 ===');
@@ -88,7 +88,7 @@ if (!dogQuizData) {
 } else if (dogQuizErrors.length === 0) {
   const reverseCount = dogQuizData.filter(q => q.reverse).length;
   const singlePetCount = dogQuizData.filter(q => q.singlePet === true).length;
-  console.log('OK：30 题全部通过（反向 ' + reverseCount + '，singlePet ' + singlePetCount + '）');
+  console.log('OK：45 题全部通过（反向 ' + reverseCount + '，singlePet ' + singlePetCount + '）');
 } else {
   dogQuizErrors.forEach(e => console.log('ERROR:', e));
 }
@@ -141,7 +141,7 @@ if (!dogAdviceData) {
 
 console.log('\n=== 狗册资产清单 ===');
 const dogAssets: Array<[string, boolean, string]> = [
-  ['quiz-dog.json', dogQuizData !== null, '30 题'],
+  ['quiz-dog.json', dogQuizData !== null, '45 题'],
   ['dimensions-dog.json', dogAnchorsData !== null, '30 条锚点'],
   ['copy-dog.json', dogCopyData !== null, '16 型文案'],
   ['special-dog.json', dogSpecialData !== null, '隐藏型/兜底型'],
