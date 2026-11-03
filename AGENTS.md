@@ -3,7 +3,7 @@
 > 本文只放 AI 必读的内容：不可破坏的红线、技术栈、日常命令、文档路由。
 > 业务规则、计分、题库规范、算法细节一律在 `docs/`；人类请看 [`README.md`](README.md)。
 
-**项目**：pawscribe / 猫狗性格志 —— 30 题，给你的猫或狗一份会随时间变化的性格档案
+**项目**：pawscribe / 猫狗性格志 —— 45 题，给你的猫或狗一份会随时间变化的性格档案
 **许可**：MIT
 
 ---
@@ -11,7 +11,7 @@
 ## 1. 技术栈
 
 Next.js 14 (App Router) · React 18 · TypeScript 5.5 · Tailwind 3
-运行时依赖**仅限** `zod` / `nanoid` / `lucide-react`（`react` / `react-dom` / `next` 是框架自带）；devDependency 仅额外 `@playwright/test` 用于 e2e，不进入客户端 bundle。
+运行时依赖**仅限** `zod` / `nanoid` / `lucide-react`（`react` / `react-dom` / `next` 是框架自带）；devDependency 仅额外 `@playwright/test` 用于 e2e，**不得进入运行时依赖，也不进入客户端 bundle**。
 状态一律用 React 自身 + localStorage，**没有状态库**。
 CLI 工具链用 Node 24 原生 TypeScript（`node cli/src/*.ts`），**不引入额外依赖**。
 
@@ -31,7 +31,7 @@ CLI 工具链用 Node 24 原生 TypeScript（`node cli/src/*.ts`），**不引�
 
 ### 2.3 每题只服务一个维度
 
-30 题（§16.2）每题**只归属一个维度**，跨维度会污染计分。反向题 `points = 4 - p` 翻转，每维至多 1 题反向。
+45 题（§16.2）每题**只归属一个维度**，跨维度会污染计分。反向题 `points = 4 - p` 翻转，每维至多 1 题反向。
 
 ### 2.4 不做兽医 / 行为诊断
 
@@ -92,8 +92,8 @@ npm run test:e2e         # Playwright Chromium 冒烟（需先 build）
 
 # CLI 工具链
 npm run cli:types                    # 生成 16 型，输出到 stdout
-npm run cli:quiz                     # 生成/校验猫册 30 题
-npm run cli:quiz:dog                 # 生成/校验狗册 30 题
+npm run cli:quiz                     # 生成/校验猫册 45 题
+npm run cli:quiz:dog                 # 生成/校验狗册 45 题
 npm run cli:copy                     # 生成/校验猫册 16 型文案
 npm run cli:copy:dog                 # 生成/校验狗册 16 型文案
 npm run cli:stress                   # 生成/校验猫册压力信号
@@ -112,7 +112,7 @@ CI：`.github/workflows/ci.yml` 在 push `main`/`dev` 与 PR `main` 时运行 ve
 |---|---|
 | 产品定位 / 玩法规则 / 验收标准 | [`docs/PRD.md`](docs/PRD.md) |
 | 15 维定义 / 计分 / 匹配算法 | [`docs/PRD.md`](docs/PRD.md) §6 |
-| 30 题 / 压力信号 / 16 型文案 | [`docs/PRD.md`](docs/PRD.md) §16-17 |
+| 45 题 / 压力信号 / 16 型文案 | [`docs/PRD.md`](docs/PRD.md) §16-17 |
 | 竞品与学术依据 | [`docs/research/`](docs/research/) |
 | 部署 / EdgeOne Makers | 本文 §6 |
 

@@ -18,7 +18,7 @@ export default function Home() {
       <p className="mb-3 text-sm font-medium tracking-widest text-amber-700">PAWSCRIBE</p>
       <h1 className="mb-4 text-4xl font-bold tracking-tight">猫狗性格志</h1>
       <p className="mb-10 max-w-md text-base leading-relaxed text-stone-600">
-        30 题，给你的猫或狗一份会随时间变化的性格档案
+        45 题，给你的猫或狗一份会随时间变化的性格档案
       </p>
       <a
         href="/test"
@@ -26,7 +26,7 @@ export default function Home() {
       >
         开始测试
       </a>
-      <p className="mt-6 text-xs text-stone-400">30 道题 + 4 道压力信号 · 约 3 分钟 · 结果永久免费</p>
+      <p className="mt-6 text-xs text-stone-400">45 道题 + 4 道压力信号 · 约 4 分钟 · 结果永久免费</p>
       {dogReady && (
         <a href="/test?species=dog" className="mt-4 text-sm text-stone-500 underline">
           狗册测试

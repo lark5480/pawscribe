@@ -50,7 +50,7 @@ function checkForbidden(text: string, label: string, forbiddenWords: string[], e
 
 export function validateQuiz(questions: Question[], forbiddenWords: string[] = []): string[] {
   const errors: string[] = [];
-  if (questions.length !== 30) errors.push('题量应为 30，实际 ' + questions.length);
+  if (questions.length !== 45) errors.push('题量应为 45，实际 ' + questions.length);
   const dimCount: Record<string, number> = {};
   const dimReverse: Record<string, number> = {};
   for (const q of questions) {
@@ -68,7 +68,7 @@ export function validateQuiz(questions: Question[], forbiddenWords: string[] = [
   }
   for (let i = 1; i <= 15; i++) {
     const d = 'D' + i;
-    if (dimCount[d] !== 2) errors.push(d + ' 题量应为 2，实际 ' + (dimCount[d] || 0));
+    if (dimCount[d] !== 3) errors.push(d + ' 题量应为 3，实际 ' + (dimCount[d] || 0));
     if ((dimReverse[d] || 0) > 1) errors.push(d + ' 反向题应 ≤1，实际 ' + dimReverse[d]);
   }
   const totalReverse = questions.filter(q => q.reverse).length;

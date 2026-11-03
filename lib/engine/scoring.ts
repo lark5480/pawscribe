@@ -6,17 +6,17 @@ export function scoreQuestion(question: Question, choice: number): number {
   return question.reverse ? 4 - p : p;
 }
 
-// 每维 2 题 → 分数和 2-3 记 L / 4 记 M / 5-6 记 H
+// 每维 3 题 → 分数和 3-5 记 L / 6 记 M / 7-9 记 H
 export function scoreDimension(scores: number[]): Level {
   const sum = scores.reduce((a, b) => a + b, 0);
-  if (sum <= 3) return 0;
-  if (sum === 4) return 1;
+  if (sum <= 5) return 0;
+  if (sum === 6) return 1;
   return 2;
 }
 
-const QUESTIONS_PER_DIM = 2;
+const QUESTIONS_PER_DIM = 3;
 
-// 30 题答案 → 15 维向量；答案不完整时明确报错，避免静默记成 L
+// 45 题答案 → 15 维向量；答案不完整时明确报错，避免静默记成 L
 export function scoreQuiz(questions: Question[], answers: Record<number, number>): Vector {
   const dimScores: Record<string, number[]> = {};
   for (const q of questions) {

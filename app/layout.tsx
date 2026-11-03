@@ -1,22 +1,26 @@
 import type { Metadata } from 'next';
+import { siteConfig } from '@/lib/site';
 import './globals.css';
 
-const SITE_NAME = '猫狗性格志';
-const SITE_DESCRIPTION = '30 题，给你的猫或狗一份会随时间变化的性格档案';
+// 只有配置了公网域名才启用 metadataBase；未配置时不设，也不退回任何假域名。
+const siteUrl = siteConfig.url;
 
 export const metadata: Metadata = {
-  title: SITE_NAME,
-  description: SITE_DESCRIPTION,
+  metadataBase: siteUrl ? new URL(siteUrl) : undefined,
+  title: siteConfig.name,
+  description: siteConfig.description,
   openGraph: {
-    title: SITE_NAME,
-    description: SITE_DESCRIPTION,
+    title: siteConfig.name,
+    description: siteConfig.description,
     type: 'website',
     locale: 'zh_CN',
+    ...(siteUrl ? { images: [siteConfig.ogImage] } : {}),
   },
   twitter: {
-    card: 'summary',
-    title: SITE_NAME,
-    description: SITE_DESCRIPTION,
+    card: 'summary_large_image',
+    title: siteConfig.name,
+    description: siteConfig.description,
+    ...(siteUrl ? { images: [siteConfig.ogImage.url] } : {}),
   },
 };
 

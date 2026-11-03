@@ -3,7 +3,16 @@ import { decodeVector } from './codec';
 import { matchType } from './matching';
 import { resolveTypeCopy } from './result';
 import { getSpeciesData } from './data';
+import { siteConfig } from '../site';
 import type { Species } from './types';
+
+// 静态社交封面：1200×630，放在 public/og-cover.png
+const OG_IMAGE = {
+  url: '/og-cover.png',
+  width: 1200,
+  height: 630,
+  alt: '《猫狗性格志》分享封面：暖纸色背景上，左侧为「猫狗性格志」主标题与「45 题，给你的猫或狗一份会随时间变化的性格档案」副标题，右侧圆牌内并排猫与狗的线描图标。',
+};
 
 function fallbackMetadata(species: Species): Metadata {
   const ready = getSpeciesData(species) !== null;
@@ -37,11 +46,23 @@ export function buildResultMetadata(code: string, species: Species): Metadata {
     const title = parts.join(' · ');
     const description =
       '猫狗性格志：给猫和狗一份会随时间变化的性格档案。' + (copy.hook ? ' ' + copy.hook : copy.note ? ' ' + copy.note : '');
+    // 未配置公网域名时不声明封面图，避免产出 localhost 一类假绝对地址
+    const hasSiteUrl = Boolean(siteConfig.url);
     return {
       title,
       description,
-      openGraph: { title, description, type: 'website' },
-      twitter: { card: 'summary', title, description },
+      openGraph: {
+        title,
+        description,
+        type: 'website',
+        ...(hasSiteUrl ? { images: [OG_IMAGE] } : {}),
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+        ...(hasSiteUrl ? { images: [OG_IMAGE.url] } : {}),
+      },
     };
   } catch {
     return fallbackMetadata(species);

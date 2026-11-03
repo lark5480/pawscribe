@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "license": "MIT",
-  "description": "猫狗性格志 —— 30 题，给你的猫或狗一份会随时间变化的性格档案",
+  "description": "猫狗性格志 —— 45 题，给你的猫或狗一份会随时间变化的性格档案",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

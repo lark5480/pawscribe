@@ -160,9 +160,9 @@ test('压力分取 4 题均值，落在 0-100', () => {
   assert.equal(scoreStress(make(2), ids), 100);
 });
 
-test('validateQuiz 校验每维 2 题；validateStress 校验 id 冲突', () => {
+test('validateQuiz 校验每维 3 题；validateStress 校验 id 冲突', () => {
   const broken = quiz.filter(q => q.id !== 30);
-  assert.ok(validateQuiz(broken).some(e => e.includes('D15 题量应为 2')));
+  assert.ok(validateQuiz(broken).some(e => e.includes('D15 题量应为 3')));
   const conflict = [...stress.questions.map(q => ({ ...q, id: q.id - 100 }))];
   assert.ok(validateStress(conflict, stress.levels, quiz.map(q => q.id)).some(e => e.includes('与题库冲突')));
 });
@@ -243,7 +243,7 @@ test('兜底型替换 16 型文案', () => {
 });
 
 test('真实 16 型模板下也存在相似度 <60 的向量', () => {
-  const vector = [0, 2, 2, 0, 1, 2, 0, 2, 2, 2, 0, 0, 0, 2, 0] as Vector;
+  const vector = [2, 1, 1, 0, 0, 2, 0, 1, 1, 2, 2, 0, 1, 2, 2] as Vector;
   const match = matchType(vector, templates, copies);
   assert.equal(match.similarity, 57);
   assert.equal(match.isFallback, true);
@@ -530,7 +530,7 @@ test('物种数据：猫狗双册完整接入，狗册资产均为狗版', () =>
   assert.ok(cat);
   assert.equal(cat.species, 'cat');
   assert.equal(cat.dimensions.length, 15);
-  assert.equal(cat.questions.length, 30);
+  assert.equal(cat.questions.length, 45);
   assert.equal(cat.stressQuestions.length, 4);
   assert.equal(cat.stressLevels.length, 2);
   assert.equal(cat.typeTemplates.length, 16);
@@ -539,7 +539,7 @@ test('物种数据：猫狗双册完整接入，狗册资产均为狗版', () =>
   const dog = getSpeciesData('dog');
   assert.ok(dog);
   assert.equal(dog.species, 'dog');
-  assert.equal(dog.questions.length, 30);
+  assert.equal(dog.questions.length, 45);
   assert.equal(dog.stressQuestions.length, 4);
   assert.equal(dog.stressLevels.length, 2);
   assert.equal(dog.typeTemplates.length, 16);
@@ -797,16 +797,16 @@ test('类型代码建议全局唯一：同册重复与跨册保留代码均报�
   assert.deepEqual(validateCopy(copies, []), []);
 });
 
-test('狗册题库：合同校验通过，反向 5 题、每维 2 题、D8 单宠 2 题', () => {
+test('狗册题库：合同校验通过，反向 5 题、每维 3 题、D8 单宠 3 题', () => {
   assert.deepEqual(validateQuiz(dogQuiz, CAT_SPECIFIC_WORDS), []);
   assert.equal(dogQuiz.filter((q) => q.reverse).length, 5);
   // 反向题与 D8 单宠题的题号是内容合同的一部分，改动必须同步 PRD §17.5
   assert.deepEqual(dogQuiz.filter((q) => q.reverse).map((q) => q.id), [4, 8, 12, 18, 24]);
   for (let i = 1; i <= 15; i++) {
-    assert.equal(dogQuiz.filter((q) => q.dim === 'D' + i).length, 2, 'D' + i + ' 题量错误');
+    assert.equal(dogQuiz.filter((q) => q.dim === 'D' + i).length, 3, 'D' + i + ' 题量错误');
   }
-  assert.equal(dogQuiz.filter((q) => q.dim === 'D8' && q.singlePet === true).length, 2);
-  assert.deepEqual(dogQuiz.filter((q) => q.dim === 'D8' && q.singlePet === true).map((q) => q.id), [15, 16]);
+  assert.equal(dogQuiz.filter((q) => q.dim === 'D8' && q.singlePet === true).length, 3);
+  assert.deepEqual(dogQuiz.filter((q) => q.dim === 'D8' && q.singlePet === true).map((q) => q.id), [15, 16, 38]);
   const text = dogQuiz.map((q) => q.q + q.options.join('')).join('');
   for (const w of CAT_SPECIFIC_WORDS) assert.equal(text.includes(w), false, '狗题出现猫册词：' + w);
 });
