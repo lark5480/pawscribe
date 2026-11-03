@@ -8,6 +8,9 @@ dist/
 *.tsbuildinfo
 *.log
 .DS_Store
+test-results/
+playwright-report/
+blob-report/
 .env*.local
 .env
 cloudflared.exe

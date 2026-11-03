@@ -11,6 +11,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "test": "node --test cli/src/engine.test.ts",
+    "test:e2e": "playwright test",
     "cli:types": "node cli/src/generator.ts",
     "cli:quiz": "node cli/src/gen-quiz.ts",
     "cli:quiz:dog": "node cli/src/gen-quiz-dog.ts",
@@ -30,6 +31,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@types/node": "^20.14.0",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",

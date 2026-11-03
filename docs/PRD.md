@@ -346,7 +346,7 @@ similarity = max(0, round((1 - distance / 30) * 100))
 | 分层 | `lib/engine/*` 纯函数层（无 IO、无时间、无全局状态），客户端与服务端共用同一份实现 |
 | 分享卡 | Canvas 生成 1200×630 PNG |
 | 产物隔离 | 目标：dev / build / e2e 各用独立 `distDir`；当前未配置，dev 与 build 共用 `.next` |
-| CI | 目标：`verify`（lint / format / typecheck / 单测 / 构建）+ `e2e`（Playwright 冒烟）；当前未配置，仓库无 ESLint / format / Playwright |
+| CI | 已配置 `.github/workflows/ci.yml`：verify（`typecheck` / `cli:validate` / `test` / `build`）+ e2e（Playwright Chromium）；lint / format 尚未接入 |
 | 许可与署名 | MIT + GitHub handle（不用真名） |
 | 文档分层 | `README.md`（人）/ `AGENTS.md`（AI）/ `docs/`（长文），「一个事实一个权威源」 |
 
@@ -454,7 +454,7 @@ interface StressQuestion {
 
 > **发布门禁（2026-11-03 调整）**：能否发布不看标准 1，看三条——
 > ① **CI 全绿**：`.github/workflows/ci.yml` 的 `typecheck` / `cli:validate` / `test` / `build` 全部通过；
-> ② **关键路径冒烟**：按人工清单逐条走通（首页 → 猫册/狗册 30 题 + 4 道压力题 → 结果页 → 类型库 → 维度 → 轨迹 → 对照 → 分享下载），冒烟**暂未自动化**；
+> ② **关键路径冒烟**：Playwright（Chromium）自动覆盖首页 / 关于、结果页雷达与分享卡、猫册 34 步测试流、狗册结果、双宠对照与跨物种拒绝；分享面板等无法稳定自动化的部分保留人工清单；
 > ③ **30 题完成率可观测**：标准 6 的完成率有可读取的统计口径，不是凭印象判断。
 
 > 验收记录（2026-11-03）：§11 的 1–9 项目前均未形成可复核的验收记录；本文只定义标准，不声称已达标。
@@ -466,7 +466,7 @@ interface StressQuestion {
 | 阶段 | 内容 | 出口条件 | 状态（2026-11-03） |
 |---|---|---|---|
 | **v0 验证** | 猫册 30 题 + 15 维模板 16 型 + 匹配引擎 + 结果页 + 分享卡 | 标准 1–5 达标 | 内容/引擎/结果页已实现；§11 #1–#5 未形成验收记录 |
-| **v1 上线** | 公开部署、维度出处页、类型库页、Playwright 冒烟（未落地）、CI 两段（未落地） | 标准 6–9 达标 | 页面已实现；Playwright / CI 未配置；公开部署未在仓库记录 |
+| **v1 上线** | 公开部署、维度出处页、类型库页、Playwright 冒烟（已配置）、CI verify（已配置） | 标准 6–9 达标 | 页面已实现；CI verify + Playwright e2e 已配置；公开部署未在仓库记录 |
 | **v1.1** | 纵向轨迹 `/trace`（复测 diff，存储与身份见 §19.4） | ≥20 个档案有 ≥2 条记录；`trace.ts` 有纯函数单测；复测信度作为**上线后研究里程碑**跟踪（§11 #1：10–15 只、间隔 ≥7 天、≥10/15 维一致），不作为出口门禁 | 已实现；出口条件未验证 |
 | **v1.2** | 双宠对照 `/compare` | — | 已实现 |
 | **v2** | 狗册（独立题库 + 独立行为锚点；复用 16 型向量，另立代码 / 名称 / 钩子 / 建议 / 品种参考） | — | 已实现；狗册资产齐备 |
@@ -791,8 +791,8 @@ interface StressQuestion {
 
 ### 19.6 工程能力状态校正（2026-11-03）
 
-**问题**：§10.1 原先把 ESLint / format / CI / Playwright / 独立 `distDir` 写成已有资产，§12 v1 也把 Playwright 冒烟与 CI 两段列为上线内容；仓库实际只有 `typecheck`、`test`、`cli:validate`、`build`，没有 ESLint 配置、没有 CI 配置、没有 Playwright，`next.config.mjs` 也未设置 `distDir`。
+**问题**：§10.1 原先把 ESLint / format / CI / Playwright / 独立 `distDir` 写成已有资产，§12 v1 也把 Playwright 冒烟与 CI 两段列为上线内容。仓库现状是：CI verify（`typecheck` / `cli:validate` / `test` / `build`）与 Playwright e2e 均已配置；仍没有 ESLint / format 配置，`next.config.mjs` 未设置 `distDir`。
 
-**裁定**：这些能力统一按“目标 / 未落地”记录，不写成现状。当前自检以 AGENTS §4 的 `typecheck` + `test` + `build` + `cli:validate` 为准；是否补 CI/e2e 另立任务，不在本次文档校正中引入配置。
+**裁定**：CI verify 与 Playwright e2e 按现状记录；ESLint / format / 独立 `distDir` 继续按“目标 / 未落地”记录。当前自检以 CI verify 四条命令 + `npm run test:e2e` 为准。
 
-**影响**：§10.1 的“产物隔离 / CI”两行、§12 v1 行与状态列、§11 验收记录说明同步修改。
+**影响**：§10.1 的“产物隔离 / CI”两行、§12 v1 行与状态列、§11 发布门禁说明同步修改。
