@@ -1,16 +1,33 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { hasSpeciesData } from '@/lib/engine/data';
-import { historySpeciesPresent, readHistory } from '@/lib/store/history';
+import { getSpeciesData, hasSpeciesData } from '@/lib/engine/data';
+import { encodeVector } from '@/lib/engine/codec';
+import { latestRecency } from '@/lib/engine/time';
+import { readHistory } from '@/lib/store/history';
+
+const CAT_DATA = getSpeciesData('cat');
+const SAMPLE_COPY = CAT_DATA?.typeCopies.find((copy) => copy.code === 'DART');
+const SAMPLE_TEMPLATE = CAT_DATA?.typeTemplates.find((template) => template.index === SAMPLE_COPY?.index);
+const SAMPLE_LINK =
+  SAMPLE_COPY && SAMPLE_TEMPLATE
+    ? { name: SAMPLE_COPY.name, href: '/result/' + encodeVector(SAMPLE_TEMPLATE.vector) }
+    : null;
 
 export default function Home() {
-  const [historyPresence, setHistoryPresence] = useState({ cat: false, dog: false });
+  const [historyRecency, setHistoryRecency] = useState<{ cat: string | null; dog: string | null }>({
+    cat: null,
+    dog: null,
+  });
   // 狗册内容未上线时不展示狗入口，避免给出一个点进去没有内容的选项
   const dogReady = hasSpeciesData('dog');
 
   useEffect(() => {
-    setHistoryPresence(historySpeciesPresent(readHistory().records));
+    const { records } = readHistory();
+    setHistoryRecency({
+      cat: latestRecency(records, 'cat'),
+      dog: latestRecency(records, 'dog'),
+    });
   }, []);
 
   return (
@@ -27,6 +44,11 @@ export default function Home() {
         开始测试
       </a>
       <p className="mt-6 text-xs text-stone-400">45 道题 + 4 道压力信号 · 约 4 分钟 · 结果永久免费</p>
+      {SAMPLE_LINK && (
+        <a href={SAMPLE_LINK.href} className="mt-4 text-sm text-stone-500 underline">
+          先看一份样例档案：{SAMPLE_LINK.name}
+        </a>
+      )}
       {dogReady && (
         <a href="/test?species=dog" className="mt-4 text-sm text-stone-500 underline">
           狗册测试
@@ -42,14 +64,14 @@ export default function Home() {
         <a href="/about" className="text-sm text-stone-500 underline">
           关于与隐私
         </a>
-        {historyPresence.cat && (
+        {historyRecency.cat && (
           <a href="/trace" className="text-sm text-amber-700 underline">
-            {historyPresence.dog ? '猫册轨迹' : '历史轨迹'}
+            {historyRecency.dog ? '猫册轨迹' : '历史轨迹'} · {historyRecency.cat}
           </a>
         )}
-        {historyPresence.dog && (
+        {historyRecency.dog && (
           <a href="/trace?species=dog" className="text-sm text-amber-700 underline">
-            狗册轨迹
+            狗册轨迹 · {historyRecency.dog}
           </a>
         )}
       </div>

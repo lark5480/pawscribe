@@ -106,7 +106,7 @@ docs/                PRD 与调研快照
 - 猫册与狗册均已开放：45 题 + 4 道压力题、16 型、类型库、维度页、轨迹与双宠对照。
 - 纯客户端；无账号、无数据库、无服务端状态。
 - CI：GitHub Actions 运行 verify（typecheck + 内容校验 + 单测 + build）与 Playwright Chromium 冒烟。
-- 部署：EdgeOne Makers（免费版），构建命令 `npm run build`，输出 `.next`。
+- 部署：EdgeOne Makers（免费版），构建命令 `npm run build`，输出 `.next`；当前使用预览链接（`eo_token` 3 小时有效），未绑定自定义域名。
 - 许可：MIT。
 
 ## 文档

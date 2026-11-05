@@ -11,6 +11,7 @@ import type { DimensionAnchor } from '../../lib/engine/validator.ts';
 import { diffRecords } from '../../lib/engine/trace.ts';
 import { createQuizOrder, isValidQuizOrder } from '../../lib/engine/order.ts';
 import { getSpeciesData, hasSpeciesData } from '../../lib/engine/data.ts';
+import { daysSince, latestRecency, recencyLabel } from '../../lib/engine/time.ts';
 import type { TraceRecord } from '../../lib/engine/trace.ts';
 import {
   HISTORY_KEY,
@@ -80,6 +81,45 @@ test('base36 解码拒绝非法字符与越界余数', () => {
   assert.equal(decodeVector('ABC!'), null);
   assert.equal(decodeVector('ZZZZZZ'), null);
   assert.deepEqual(decodeVector('0'), Array(15).fill(0));
+});
+
+test('DART 样例：类型库链接 code 为 JI 且可解码回模板', () => {
+  const dart = copies.find((copy) => copy.code === 'DART');
+  assert.ok(dart);
+  const template = templates.find((item) => item.index === dart.index);
+  assert.ok(template);
+  const code = encodeVector(template.vector);
+  assert.equal(code, 'JI');
+  assert.deepEqual(decodeVector(code), template.vector);
+});
+
+test('daysSince 按本地日历日计算，非法与未来安全降级', () => {
+  const now = new Date(2026, 10, 5, 9, 30);
+  assert.equal(daysSince(new Date(2026, 10, 5, 23, 0).toISOString(), now), 0);
+  assert.equal(daysSince(new Date(2026, 10, 4, 23, 0).toISOString(), now), 1);
+  assert.equal(daysSince(new Date(2026, 10, 2, 8, 0).toISOString(), now), 3);
+  assert.equal(daysSince(new Date(2026, 10, 9, 8, 0).toISOString(), now), 0);
+  assert.equal(daysSince('not-a-date', now), null);
+});
+
+test('recencyLabel 返回今天 / 昨天 / N 天前', () => {
+  const now = new Date(2026, 10, 5, 12);
+  assert.equal(recencyLabel(new Date(2026, 10, 5, 1, 0).toISOString(), now), '今天');
+  assert.equal(recencyLabel(new Date(2026, 10, 4, 1, 0).toISOString(), now), '昨天');
+  assert.equal(recencyLabel(new Date(2026, 9, 29, 1, 0).toISOString(), now), '7 天前');
+  assert.equal(recencyLabel('x', now), null);
+});
+
+test('latestRecency 取该物种最新记录，忽略乱序与其它物种', () => {
+  const now = new Date(2026, 10, 5, 12);
+  const records = [
+    { species: 'cat' as const, testedAt: new Date(2026, 9, 20, 12).toISOString() },
+    { species: 'dog' as const, testedAt: new Date(2026, 10, 4, 12).toISOString() },
+    { species: 'cat' as const, testedAt: new Date(2026, 9, 30, 12).toISOString() },
+  ];
+  assert.equal(latestRecency(records, 'cat', now), '6 天前');
+  assert.equal(latestRecency(records, 'dog', now), '昨天');
+  assert.equal(latestRecency([], 'cat', now), null);
 });
 
 test('反向题按 4-p 翻转', () => {

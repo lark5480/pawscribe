@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>猫狗性格志 · 系统架构</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&family=Noto+Serif:ital@0;1&family=Noto+Serif+SC:wght@400&family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:  #fafaf9;
+      --color-ink:    #1c1917;
+      --color-muted:  #57534e;
+      --color-soft:   #78716c;
+      --color-accent: #b45309;
+      --font-sans:    'Geist', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+      --font-serif:   'Instrument Serif', 'Noto Serif', 'Noto Serif SC', serif;
+      --font-mono:    'Geist Mono', ui-monospace, monospace;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+
+    .frame { max-width: 960px; width: 100%; }
+
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 2.4vw + 0.75rem, 2rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--color-ink);
+      margin-bottom: 0.5rem;
+    }
+
+    .deck {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--color-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .diagram-container { width: 100%; overflow-x: auto; }
+    svg { width: 100%; min-width: 960px; display: block; }
+
+    @media print {
+      .diagram-container { overflow-x: visible; }
+      svg { min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Architecture · Pawscribe</p>
+    <h1>猫狗性格志 · 系统架构</h1>
+    <p class="deck">浏览器内的 15 维计分、档案与分享；答案不上传，历史只存本机。</p>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="pawscribe-architecture-title pawscribe-architecture-desc">
+        <title id="pawscribe-architecture-title">猫狗性格志 · 系统架构</title>
+        <desc id="pawscribe-architecture-desc">浏览器内的 Next.js 页面、45 加 4 题测试流、计分与匹配引擎、猫狗内容资产、本地存储和分享卡，由 EdgeOne Makers 预览托管，没有 API 路由。</desc>
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#57534e"/>
+          </marker>
+          <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#b45309"/>
+          </marker>
+          <marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#44403c"/>
+          </marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#fafaf9"/>
+
+        <!-- Zone: browser-only runtime. Drawn before arrows and nodes. -->
+        <rect x="300" y="40" width="560" height="480" rx="8"
+              fill="rgba(28,25,23,0.02)" stroke="rgba(28,25,23,0.10)" stroke-width="0.8" stroke-dasharray="4,4"/>
+        <rect x="310" y="46" width="238" height="18" rx="2" fill="#fafaf9"/>
+        <text x="316" y="60" fill="#78716c" font-size="12" font-weight="500"
+              font-family="'Geist', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif">浏览器 · 无 API 路由 · 数据仅存本地</text>
+
+        <!-- Connectors (behind nodes) -->
+        <path d="M284,112 H340" fill="none" stroke="#44403c" stroke-width="1.2" marker-end="url(#arrow-link)"/>
+        <path d="M440,144 V184" fill="none" stroke="#57534e" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <path d="M440,248 V296" fill="none" stroke="#57534e" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <path d="M540,216 H572 Q580,216 580,224 V300 Q580,308 588,308 H620"
+              fill="none" stroke="#57534e" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <path d="M540,328 H620" fill="none" stroke="#57534e" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <path d="M720,248 V296" fill="none" stroke="#57534e" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <path d="M440,360 V408" fill="none" stroke="#57534e" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <path d="M500,360 V376 Q500,384 508,384 H712 Q720,384 720,392 V408"
+              fill="none" stroke="#57534e" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+        <!-- Arrow label: content assets feed the engine -->
+        <rect x="728" y="264" width="80" height="16" rx="2" fill="#fafaf9"/>
+        <text x="768" y="276" fill="#78716c" font-size="12" font-weight="500"
+              font-family="'Geist', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif"
+              text-anchor="middle">题库 · 模板</text>
+
+        <!-- Node: EdgeOne Makers (external) -->
+        <rect x="84" y="80" width="200" height="64" rx="6" fill="#fafaf9"/>
+        <rect x="84" y="80" width="200" height="64" rx="6" fill="rgba(28,25,23,0.03)" stroke="rgba(28,25,23,0.30)" stroke-width="1"/>
+        <rect x="92" y="86" width="36" height="12" rx="2" fill="transparent" stroke="rgba(28,25,23,0.22)" stroke-width="0.8"/>
+        <text x="110" y="95" fill="#57534e" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">HOST</text>
+        <text x="184" y="116" fill="#1c1917" font-size="12" font-weight="600" font-family="'Geist', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="middle">EdgeOne Makers</text>
+        <text x="184" y="132" fill="#57534e" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">preview · eo_token 3h</text>
+
+        <!-- Node: page layer -->
+        <rect x="340" y="80" width="200" height="64" rx="6" fill="#fafaf9"/>
+        <rect x="340" y="80" width="200" height="64" rx="6" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+        <rect x="348" y="86" width="36" height="12" rx="2" fill="transparent" stroke="rgba(28,25,23,0.40)" stroke-width="0.8"/>
+        <text x="366" y="95" fill="#57534e" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PAGE</text>
+        <text x="440" y="116" fill="#1c1917" font-size="12" font-weight="600" font-family="'Geist', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="middle">页面层</text>
+        <text x="440" y="132" fill="#57534e" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">Next.js 14 · App Router</text>
+
+        <!-- Node: test flow -->
+        <rect x="340" y="184" width="200" height="64" rx="6" fill="#fafaf9"/>
+        <rect x="340" y="184" width="200" height="64" rx="6" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+        <rect x="348" y="190" width="36" height="12" rx="2" fill="transparent" stroke="rgba(28,25,23,0.40)" stroke-width="0.8"/>
+        <text x="366" y="199" fill="#57534e" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FLOW</text>
+        <text x="440" y="220" fill="#1c1917" font-size="12" font-weight="600" font-family="'Geist', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="middle">测试流</text>
+        <text x="440" y="236" fill="#57534e" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">45 + 4 steps per species</text>
+
+        <!-- Node: result page -->
+        <rect x="340" y="296" width="200" height="64" rx="6" fill="#fafaf9"/>
+        <rect x="340" y="296" width="200" height="64" rx="6" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+        <rect x="348" y="302" width="44" height="12" rx="2" fill="transparent" stroke="rgba(28,25,23,0.40)" stroke-width="0.8"/>
+        <text x="370" y="311" fill="#57534e" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RESULT</text>
+        <text x="440" y="332" fill="#1c1917" font-size="12" font-weight="600" font-family="'Geist', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="middle">结果页</text>
+        <text x="440" y="348" fill="#57534e" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">type card · 15-dim radar</text>
+
+        <!-- Node: local storage (focal) -->
+        <rect x="340" y="408" width="200" height="64" rx="6" fill="#fafaf9"/>
+        <rect x="340" y="408" width="200" height="64" rx="6" fill="rgba(180,83,9,0.08)" stroke="#b45309" stroke-width="1.2"/>
+        <rect x="348" y="414" width="36" height="12" rx="2" fill="transparent" stroke="rgba(180,83,9,0.50)" stroke-width="0.8"/>
+        <text x="366" y="423" fill="#57534e" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STATE</text>
+        <text x="440" y="444" fill="#1c1917" font-size="12" font-weight="600" font-family="'Geist', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="middle">本地存储</text>
+        <text x="440" y="460" fill="#57534e" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">local + session storage</text>
+
+        <!-- Node: content assets -->
+        <rect x="620" y="184" width="200" height="64" rx="6" fill="#fafaf9"/>
+        <rect x="620" y="184" width="200" height="64" rx="6" fill="rgba(28,25,23,0.05)" stroke="#57534e" stroke-width="1"/>
+        <rect x="628" y="190" width="36" height="12" rx="2" fill="transparent" stroke="rgba(87,83,78,0.50)" stroke-width="0.8"/>
+        <text x="646" y="199" fill="#57534e" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ASSET</text>
+        <text x="720" y="220" fill="#1c1917" font-size="12" font-weight="600" font-family="'Geist', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="middle">内容资产</text>
+        <text x="720" y="236" fill="#57534e" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">cat + dog JSON</text>
+
+        <!-- Node: scoring and matching engine (focal) -->
+        <rect x="620" y="296" width="200" height="64" rx="6" fill="#fafaf9"/>
+        <rect x="620" y="296" width="200" height="64" rx="6" fill="rgba(180,83,9,0.08)" stroke="#b45309" stroke-width="1.2"/>
+        <rect x="628" y="302" width="44" height="12" rx="2" fill="transparent" stroke="rgba(180,83,9,0.50)" stroke-width="0.8"/>
+        <text x="650" y="311" fill="#57534e" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ENGINE</text>
+        <text x="720" y="332" fill="#1c1917" font-size="12" font-weight="600" font-family="'Geist', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="middle">计分与匹配引擎</text>
+        <text x="720" y="348" fill="#57534e" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">scoring · matching · codec</text>
+
+        <!-- Node: share card and result URL -->
+        <rect x="620" y="408" width="200" height="64" rx="6" fill="#fafaf9"/>
+        <rect x="620" y="408" width="200" height="64" rx="6" fill="rgba(28,25,23,0.03)" stroke="rgba(28,25,23,0.30)" stroke-width="1"/>
+        <rect x="628" y="414" width="44" height="12" rx="2" fill="transparent" stroke="rgba(28,25,23,0.22)" stroke-width="0.8"/>
+        <text x="650" y="423" fill="#57534e" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
+        <text x="720" y="444" fill="#1c1917" font-size="12" font-weight="600" font-family="'Geist', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="middle">分享卡与结果 URL</text>
+        <text x="720" y="460" fill="#57534e" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">1200×630 PNG · base36</text>
+
+        <!-- Legend strip -->
+        <line x1="40" y1="540" x2="920" y2="540" stroke="rgba(28,25,23,0.10)" stroke-width="0.8"/>
+        <text x="40" y="572" fill="#57534e" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.18em">LEGEND</text>
+
+        <rect x="120" y="562" width="14" height="10" rx="2" fill="rgba(180,83,9,0.08)" stroke="#b45309" stroke-width="1"/>
+        <text x="140" y="572" fill="#57534e" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.06em">ENGINE / STATE</text>
+
+        <rect x="300" y="562" width="14" height="10" rx="2" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+        <text x="320" y="572" fill="#57534e" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.06em">PAGE / FLOW</text>
+
+        <rect x="480" y="562" width="14" height="10" rx="2" fill="rgba(28,25,23,0.05)" stroke="#57534e" stroke-width="1"/>
+        <text x="500" y="572" fill="#57534e" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.06em">CONTENT</text>
+
+        <rect x="640" y="562" width="14" height="10" rx="2" fill="rgba(28,25,23,0.03)" stroke="rgba(28,25,23,0.30)" stroke-width="1"/>
+        <text x="660" y="572" fill="#57534e" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.06em">EXTERNAL / OUTPUT</text>
+      </svg>
+    </div>
+  </div>
+</body>
+</html>

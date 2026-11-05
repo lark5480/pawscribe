@@ -14,6 +14,8 @@ import {
   takePendingResult,
 } from '@/lib/store/history';
 import RadarChart, { MODEL_COLORS, MODEL_LABELS } from '@/components/domain/RadarChart';
+import { daysSince, recencyLabel } from '@/lib/engine/time';
+import type { TraceRecord } from '@/lib/engine/trace';
 import type { Species } from '@/lib/engine/types';
 
 // 复制链接的兜底：旧浏览器或非安全上下文没有 Clipboard API 时用临时 textarea
@@ -103,11 +105,29 @@ function drawRadarThumbnail(
   ctx.restore();
 }
 
+function newestRecord(records: TraceRecord[]): TraceRecord | null {
+  let newest: TraceRecord | null = null;
+  for (const record of records) {
+    if (!newest || Date.parse(record.testedAt) > Date.parse(newest.testedAt)) newest = record;
+  }
+  return newest;
+}
+
+function buildRetestLine(prior: TraceRecord[]): string | null {
+  const latest = newestRecord(prior);
+  if (!latest) return '今天刚建档，这是它的首份档案。';
+  const days = daysSince(latest.testedAt);
+  if (days === null) return null;
+  if (days === 0) return '上一次测试也在今天：同一天、同一类型的测试会合并成一份档案。';
+  return '距上一次测试 ' + days + ' 天。';
+}
+
 export default function ResultView({ code, species }: { code: string; species: Species }) {
   const data = getSpeciesData(species);
   const petId = petIdForSpecies(species);
   const [stress, setStress] = useState<number | null>(null);
   const [historyCount, setHistoryCount] = useState(0);
+  const [hookLine, setHookLine] = useState<string | null>(null);
   const [historyNotice, setHistoryNotice] = useState<string | null>(null);
   const [shareNotice, setShareNotice] = useState<string | null>(null);
   const [shareImage, setShareImage] = useState<{ url: string; filename: string } | null>(null);
@@ -124,6 +144,7 @@ export default function ResultView({ code, species }: { code: string; species: S
 
     const pending = takePendingResult();
     if (pending && pending.code === code && pending.species === species) {
+      const prior = readHistory().records.filter((r) => r.species === species && r.petId === petId);
       const result = appendHistory({
         id: createRecordId(),
         species: pending.species,
@@ -135,6 +156,9 @@ export default function ResultView({ code, species }: { code: string; species: S
       setHistoryCount(countForSpecies(result.records));
       if (!result.ok) {
         setHistoryNotice('本次结果未能保存到本机历史，可能是隐私模式或存储空间不足。结果页仍可正常查看。');
+        setHookLine(null);
+      } else {
+        setHookLine(buildRetestLine(prior));
       }
       return;
     }
@@ -143,8 +167,14 @@ export default function ResultView({ code, species }: { code: string; species: S
     setHistoryCount(countForSpecies(read.records));
     if (!read.available) {
       setHistoryNotice('本机历史不可用，可能是隐私模式或浏览器限制。');
+      setHookLine(null);
     } else if (read.degraded) {
       setHistoryNotice('本机历史无法读取，已按空历史处理。');
+      setHookLine(null);
+    } else {
+      const latest = newestRecord(read.records.filter((r) => r.species === species && r.petId === petId));
+      const label = latest ? recencyLabel(latest.testedAt) : null;
+      setHookLine(label ? '最近一次测试：' + label + '。' : null);
     }
   }, [code, species, petId]);
 
@@ -368,6 +398,19 @@ export default function ResultView({ code, species }: { code: string; species: S
           >
             下载到本地
           </button>
+        </div>
+      )}
+
+      {hookLine && (
+        <div className="mt-3 rounded-2xl border border-stone-200 bg-white p-6 text-center">
+          <p className="text-sm text-stone-700">{hookLine}</p>
+          <p className="mt-2 text-xs leading-relaxed text-stone-500">隔 7 天再测一次，才能看出变化。</p>
+          <a
+            href={'/test' + querySuffix}
+            className="mt-4 inline-block rounded-full bg-amber-700 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-amber-800"
+          >
+            再测一次
+          </a>
         </div>
       )}
 
