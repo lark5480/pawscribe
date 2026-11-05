@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { decodeVector } from '../lib/engine/codec';
 
 test('首页与关于页可访问，三条免责声明齐全', async ({ page }) => {
   await page.goto('/');
@@ -18,6 +19,72 @@ test('首页与关于页可访问，三条免责声明齐全', async ({ page }) 
   await expect(
     page.getByText('若你或宠物存在紧急风险或健康问题，请及时寻求专业机构与持证人士帮助。'),
   ).toBeVisible();
+});
+
+test('首页提供样例档案入口，指向真实结果页', async ({ page }) => {
+  await page.goto('/');
+  const sample = page.getByRole('link', { name: /先看一份样例档案：/ });
+  await expect(sample).toBeVisible();
+  await expect(sample).toHaveAttribute('href', /^\/result\/[0-9A-Z]+$/);
+
+  await sample.click();
+  await expect(page.getByRole('heading', { name: '停不下来的探险家' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '15 维行为画像' })).toBeVisible();
+});
+
+test('首页轨迹入口显示最近一次测试时间', async ({ page }) => {
+  await page.addInitScript(() => {
+    const record = {
+      id: 'seed-cat',
+      species: 'cat',
+      petId: 'cat-default',
+      code: '0',
+      vector: Array(15).fill(0),
+      testedAt: new Date(Date.now() - 3 * 86400000).toISOString(),
+    };
+    localStorage.setItem('pawscribe-history-v1', JSON.stringify({ version: 1, records: [record] }));
+  });
+  await page.goto('/');
+  await expect(page.getByRole('link', { name: /历史轨迹 · (今天|昨天|\d+ 天前)/ })).toBeVisible();
+});
+
+test('结果页显示上次测试间隔，并提供再测入口', async ({ page }) => {
+  const pendingVector = decodeVector('8JJOQ');
+  if (!pendingVector) throw new Error('8JJOQ 无法解码');
+
+  await page.addInitScript(
+    ({ seeded, vector }) => {
+      localStorage.setItem('pawscribe-history-v1', JSON.stringify({ version: 1, records: seeded }));
+      sessionStorage.setItem(
+        'pawscribe-pending-result',
+        JSON.stringify({
+          code: '8JJOQ',
+          vector,
+          testedAt: new Date().toISOString(),
+          species: 'cat',
+        }),
+      );
+    },
+    {
+      seeded: [
+        {
+          id: 'seed-cat',
+          species: 'cat',
+          petId: 'cat-default',
+          code: '0',
+          vector: Array(15).fill(0),
+          testedAt: new Date(Date.now() - 9 * 86400000).toISOString(),
+        },
+      ],
+      vector: pendingVector,
+    },
+  );
+
+  await page.goto('/result/8JJOQ');
+  await expect(page.getByText('距上一次测试 9 天。')).toBeVisible();
+  await expect(page.getByText('隔 7 天再测一次，才能看出变化。')).toBeVisible();
+  await expect(page.getByRole('link', { name: '再测一次' })).toHaveAttribute('href', '/test');
+  await expect(page.getByRole('link', { name: '查看它的轨迹' })).toBeVisible();
 });
 
 test('结果页渲染 15 维雷达，分享卡以图片展示且桌面可下载', async ({ page }) => {
