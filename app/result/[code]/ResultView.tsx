@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { decodeVector } from '@/lib/engine/codec';
-import { matchType } from '@/lib/engine/matching';
+import { explainMatch, HIDDEN_DIMENSIONS, matchType } from '@/lib/engine/matching';
 import { resolveTypeCopy } from '@/lib/engine/result';
 import { getSpeciesData } from '@/lib/engine/data';
 import {
@@ -180,7 +180,7 @@ export default function ResultView({ code, species }: { code: string; species: S
 
   if (!vector || !data) {
     return (
-      <main className="mx-auto max-w-2xl px-6 py-16 text-center">
+      <main id="main" tabIndex={-1} className="mx-auto max-w-2xl px-6 py-16 text-center">
         <h1 className="mb-4 text-2xl font-bold">结果不存在</h1>
         <p className="text-stone-500">链接无效或已过期。</p>
         <a href={'/test' + (species === 'dog' ? '?species=dog' : '')} className="mt-8 inline-block rounded-full bg-amber-700 px-8 py-3 text-white">重新测试</a>
@@ -189,10 +189,14 @@ export default function ResultView({ code, species }: { code: string; species: S
   }
 
   const match = matchType(vector, data.typeTemplates, data.typeCopies, species);
+  const explanation = explainMatch(vector, data.typeTemplates, data.typeCopies, species);
   const copy = resolveTypeCopy(match, data.typeCopies, data.specialTypes);
   const stressLevel = stress !== null && stress >= 50 ? data.stressLevels[1] : data.stressLevels[0];
   const resultBase = species === 'dog' ? '/dog/result/' : '/result/';
   const querySuffix = species === 'dog' ? '?species=dog' : '';
+  const dimName = (dim: string) => data.dimensions.find((d) => d.id === dim)?.name ?? dim;
+  const levelLabel = ['L', 'M', 'H'];
+  const hiddenDimNames = HIDDEN_DIMENSIONS[species].map((i) => data.dimensions[i].name).join('、');
 
   function drawShareCard() {
     const canvas = canvasRef.current;
@@ -287,7 +291,7 @@ export default function ResultView({ code, species }: { code: string; species: S
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-12">
+    <main id="main" tabIndex={-1} className="mx-auto max-w-2xl px-6 py-12">
       <canvas ref={canvasRef} className="hidden" />
       <div className="mb-8 rounded-2xl border border-stone-200 bg-white p-8">
         <p className="mb-2 text-sm font-medium tracking-widest text-amber-700">{copy.code || copy.label}</p>
@@ -300,6 +304,56 @@ export default function ResultView({ code, species }: { code: string; species: S
           </div>
           <span className="text-sm font-medium text-stone-500">{match.similarity}%</span>
         </div>
+      </div>
+
+      <div className="mb-8 rounded-2xl border border-stone-200 bg-white p-8">
+        <h2 className="mb-4 text-lg font-bold">为什么是这个类型</h2>
+        <ul className="space-y-2 text-sm leading-relaxed text-stone-700">
+          {match.isHidden ? (
+            <li>
+              隐藏型由 {hiddenDimNames} 三项同时处于 H 档触发，不属于 16 型模板
+              {`；它离距离最近的 16 型「${explanation.nearest.name}」还差 ${explanation.nearest.distance} 点距离`}
+              。
+            </li>
+          ) : explanation.runnerUp ? (
+            <li>
+              与距离最近的另一个类型
+              <a
+                href={'/library' + querySuffix + '#' + explanation.runnerUp.code}
+                className="mx-1 text-amber-700 underline"
+              >
+                {explanation.runnerUp.name}（{explanation.runnerUp.code}）
+              </a>
+              相差 {explanation.runnerUp.distance} 点距离（满量程 30）。
+            </li>
+          ) : null}
+          <li>15 维里有 {explanation.exactCount} 维与模板一致，相似度 {match.similarity}%。</li>
+          {!match.isHidden && (
+            <li>
+              {explanation.fallbackGap > 0
+                ? '离 60% 兜底线还有 ' + explanation.fallbackGap + ' 点距离，再偏离就会进入兜底型。'
+                : '相似度低于 60%，已按兜底型展示相处建议。'}
+            </li>
+          )}
+          {!match.isHidden && !match.isFallback && explanation.decisiveDims.length > 0 && (
+            <li>
+              这次判定主要靠{' '}
+              {explanation.decisiveDims.slice(0, 3).map((dim) => dim + ' ' + dimName(dim)).join('、')}。
+            </li>
+          )}
+          {explanation.flip && (
+            <li>
+              如果把 {dimName(explanation.flip.dim)} 从 {levelLabel[explanation.flip.from]} 改成{' '}
+              {levelLabel[explanation.flip.to]}，结果会变成
+              {explanation.flip.triggersHidden
+                ? '隐藏型「' + data.specialTypes.hidden.name + '」'
+                : explanation.flip.triggersFallback
+                  ? '兜底型'
+                  : '「' + explanation.flip.typeName + '」（' + explanation.flip.typeCode + '）'}
+              。
+            </li>
+          )}
+        </ul>
       </div>
 
       <div className="mb-8 rounded-2xl border border-stone-200 bg-white p-8">
@@ -365,7 +419,7 @@ export default function ResultView({ code, species }: { code: string; species: S
       </div>
 
       {shareNotice && (
-        <p className="mt-3 text-center text-xs leading-relaxed text-stone-500">{shareNotice}</p>
+        <p role="status" aria-live="polite" className="mt-3 text-center text-xs leading-relaxed text-stone-500">{shareNotice}</p>
       )}
 
       {manualUrl && (
@@ -416,6 +470,10 @@ export default function ResultView({ code, species }: { code: string; species: S
 
       <a href={'/test?' + (species === 'dog' ? 'species=dog&' : '') + 'pair=' + code} className="mt-3 block rounded-full border border-stone-300 px-6 py-3 text-center font-medium text-stone-700 transition hover:bg-stone-100">
         测我家另一只
+      </a>
+
+      <a href={'/compare?species=' + species + '&a=' + code} className="mt-3 block rounded-full border border-stone-300 px-6 py-3 text-center font-medium text-stone-700 transition hover:bg-stone-100">
+        和朋友的毛孩对照
       </a>
 
       <a href={'/library' + querySuffix} className="mt-3 block rounded-full border border-stone-300 px-6 py-3 text-center font-medium text-stone-700 transition hover:bg-stone-100">
