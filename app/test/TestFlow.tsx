@@ -56,6 +56,7 @@ export default function TestFlow({ species }: { species: Species }) {
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [order, setOrder] = useState<QuizOrder | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [resumed, setResumed] = useState(false);
   const finishedRef = useRef(false);
 
   useEffect(() => {
@@ -88,6 +89,7 @@ export default function TestFlow({ species }: { species: Species }) {
     setOrder(restoredOrder ?? createQuizOrder(questions, stressQuestions));
     setAnswers(restoredAnswers);
     setStep(restoredStep);
+    setResumed(restoredStep > 0 || Object.keys(restoredAnswers).length > 0);
     setLoaded(true);
   }, [storageKey, species, totalSteps, quizIds, stressIds, questionMap, questions, stressQuestions]);
 
@@ -96,8 +98,23 @@ export default function TestFlow({ species }: { species: Species }) {
     localStorage.setItem(storageKey, JSON.stringify({ answers, step, order }));
   }, [answers, step, order, loaded, storageKey]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [step]);
+
+  function restart() {
+    try {
+      localStorage.removeItem(storageKey);
+    } catch {}
+    finishedRef.current = false;
+    setAnswers({});
+    setStep(0);
+    setOrder(createQuizOrder(questions, stressQuestions));
+    setResumed(false);
+  }
+
   if (!loaded || !order) {
-    return <main className="mx-auto max-w-2xl px-6 py-16 text-center text-stone-400">加载中…</main>;
+    return <main id="main" tabIndex={-1} className="mx-auto max-w-2xl px-6 py-16 text-center text-stone-400">加载中…</main>;
   }
 
   const allQuestions = [...order.quiz, ...order.stress]
@@ -108,6 +125,7 @@ export default function TestFlow({ species }: { species: Species }) {
   function choose(choice: number) {
     const next = { ...answers, [current.id]: choice };
     setAnswers(next);
+    setResumed(false);
     if (step + 1 >= totalSteps) {
       finish(next);
     } else {
@@ -140,28 +158,59 @@ export default function TestFlow({ species }: { species: Species }) {
 
   const isStress = step >= questions.length;
   const progress = Math.round((step / totalSteps) * 100);
+  const selected = answers[current.id];
   // 显示顺序是原始下标的一份排列；点击时回传原始下标，计分与反向题语义不变
   const displayOrder = order.options[current.id];
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-12">
-      <div className="mb-8 h-1 w-full overflow-hidden rounded-full bg-stone-200">
+    <main id="main" tabIndex={-1} className="mx-auto max-w-2xl px-6 py-12">
+      <div
+        className="mb-8 h-1 w-full overflow-hidden rounded-full bg-stone-200"
+        role="progressbar"
+        aria-label="答题进度"
+        aria-valuemin={0}
+        aria-valuemax={totalSteps}
+        aria-valuenow={step}
+        aria-valuetext={'第 ' + (step + 1) + ' / ' + totalSteps + ' 步'}
+      >
         <div className="h-full bg-amber-700 transition-all" style={{ width: progress + '%' }} />
       </div>
+
+      {resumed && (
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          <span>已恢复上次进度（第 {step + 1} / {totalSteps} 步）</span>
+          <button onClick={restart} className="underline">重新开始</button>
+        </div>
+      )}
+
       <p className="mb-2 text-xs font-medium tracking-widest text-stone-400">
         {isStress ? '压力信号' : '第 ' + (step + 1) + ' / ' + questions.length + ' 题'}
       </p>
-      <h1 className="mb-8 text-2xl font-bold leading-snug">{current.q}</h1>
-      <div className="space-y-3">
-        {displayOrder.map((originalIndex) => (
-          <button
-            key={originalIndex}
-            onClick={() => choose(originalIndex)}
-            className="w-full rounded-xl border border-stone-200 bg-white px-5 py-4 text-left text-base transition hover:border-amber-700 hover:bg-amber-50"
-          >
-            {current.options[originalIndex]}
-          </button>
-        ))}
+      {isStress && (
+        <p className="mb-4 text-xs leading-relaxed text-stone-500">
+          以下 4 题问最近两周的日常表现，不参与性格类型。
+        </p>
+      )}
+      <h1 id="question-title" className="mb-8 text-2xl font-bold leading-snug">{current.q}</h1>
+      <div className="space-y-3" role="group" aria-labelledby="question-title">
+        {displayOrder.map((originalIndex) => {
+          const isSelected = selected === originalIndex;
+          return (
+            <button
+              key={originalIndex}
+              onClick={() => choose(originalIndex)}
+              aria-pressed={isSelected}
+              className={
+                'w-full rounded-xl border px-5 py-4 text-left text-base transition ' +
+                (isSelected
+                  ? 'border-amber-700 bg-amber-50'
+                  : 'border-stone-200 bg-white hover:border-amber-700 hover:bg-amber-50')
+              }
+            >
+              {current.options[originalIndex]}
+            </button>
+          );
+        })}
       </div>
       {step > 0 && (
         <button

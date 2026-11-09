@@ -2,9 +2,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { scoreQuestion, scoreQuiz, scoreStress } from '../../lib/engine/scoring.ts';
-import { HIDDEN_DIMENSIONS, manhattan, matchType, isHiddenType } from '../../lib/engine/matching.ts';
+import { HIDDEN_DIMENSIONS, manhattan, matchType, isHiddenType, explainMatch } from '../../lib/engine/matching.ts';
 import { resolveTypeCopy } from '../../lib/engine/result.ts';
-import { compareVectors, resolveCompareSpecies } from '../../lib/engine/compare.ts';
+import { compareVectors, resolveCompareSpecies, splitShared } from '../../lib/engine/compare.ts';
 import { encodeVector, decodeVector } from '../../lib/engine/codec.ts';
 import { validateQuiz, validateCopy, validateStress, validateSpecial, validateCompareAdvice, validateAnchors, CAT_SPECIFIC_WORDS } from '../../lib/engine/validator.ts';
 import type { DimensionAnchor } from '../../lib/engine/validator.ts';
@@ -334,9 +334,70 @@ test('compare：非法向量明确报错', () => {
   assert.throws(() => compareVectors(bad as unknown as Vector, Array(15).fill(0) as Vector), /只能是 0\/1\/2/);
 });
 
-test('比较建议只收录 D11 且通过校验', () => {
-  assert.deepEqual(Object.keys(advice), ['D11']);
+test('比较建议覆盖 5 个需留意维度并通过校验', () => {
+  assert.deepEqual(Object.keys(advice).sort(), ['D11', 'D13', 'D14', 'D15', 'D2']);
   assert.deepEqual(validateCompareAdvice(advice), []);
+});
+
+test('splitShared：有建议的维度记为张力，其余双高维度为同频', () => {
+  const shared = [
+    { dim: 'D11', aLevel: 2, bLevel: 2 },
+    { dim: 'D7', aLevel: 2, bLevel: 2 },
+    { dim: 'D2', aLevel: 2, bLevel: 2 },
+  ];
+  const { tension, resonance } = splitShared(shared, Object.keys(advice));
+  assert.deepEqual(tension.map((c) => c.dim), ['D11', 'D2']);
+  assert.deepEqual(resonance.map((c) => c.dim), ['D7']);
+});
+
+test('explainMatch：精确命中模板时 15 维一致，并给出亚军与决定性维度', () => {
+  const target = templates[0];
+  const explanation = explainMatch(target.vector, templates, copies);
+  assert.equal(explanation.exactCount, 15);
+  assert.equal(explanation.fallbackGap, 13);
+  assert.ok(explanation.runnerUp);
+  assert.ok(explanation.runnerUp!.distance >= 4);
+  assert.ok(explanation.decisiveDims.length > 0);
+  assert.ok(explanation.decisiveDims.every((d) => /^D([1-9]|1[0-5])$/.test(d)));
+});
+
+test('explainMatch：兜底向量不预测翻转', () => {
+  // 固定搜索得到：与全部 16 型的最小距离为 13（相似度 57%），低于 60% 触发兜底
+  const fallbackVector = [0, 2, 2, 1, 0, 2, 1, 0, 1, 0, 2, 1, 1, 0, 2] as Vector;
+  assert.equal(matchType(fallbackVector, templates, copies).isFallback, true);
+  const explanation = explainMatch(fallbackVector, templates, copies);
+  assert.equal(explanation.fallbackGap, 0);
+  assert.equal(explanation.flip, null);
+});
+
+test('explainMatch：隐藏型不预测翻转，且最近型来自第一名而非亚军', () => {
+  const catData = getSpeciesData('cat');
+  if (!catData) throw new Error('猫册数据应存在');
+  const match = matchType(catData.hiddenVector, templates, copies);
+  assert.equal(match.isHidden, true);
+  const explanation = explainMatch(catData.hiddenVector, templates, copies);
+  assert.equal(explanation.flip, null);
+  assert.equal(explanation.nearest.typeIndex, match.typeIndex);
+  assert.ok(explanation.nearest.distance < (explanation.runnerUp?.distance ?? Infinity));
+});
+
+test('explainMatch：翻转预测只改一维，且结果可复现', () => {
+  const vector = [0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2] as Vector;
+  const first = explainMatch(vector, templates, copies);
+  assert.deepEqual(first, explainMatch(vector, templates, copies));
+  if (!first.flip) return;
+
+  const flipped = vector.slice() as Vector;
+  flipped[Number(first.flip.dim.slice(1)) - 1] = first.flip.to;
+  const changedDims = flipped.reduce((n, v, i) => n + (v !== vector[i] ? 1 : 0), 0);
+  assert.equal(changedDims, 1);
+
+  const result = matchType(flipped, templates, copies);
+  if (first.flip.triggersHidden || first.flip.triggersFallback) {
+    assert.ok(result.isHidden || result.isFallback);
+  } else {
+    assert.notEqual(result.typeIndex, matchType(vector, templates, copies).typeIndex);
+  }
 });
 
 const dimNames = Array.from({ length: 15 }, (_, i) => '维度' + (i + 1));
@@ -985,8 +1046,8 @@ test('狗册压力题：2 指标 × 2 题、0/50/100、两档文案与文献出�
   );
 });
 
-test('狗册比较建议：只收 D11，覆盖个人空间与护食，无禁用/诊断/猫语', () => {
-  assert.deepEqual(Object.keys(dogAdvice), ['D11']);
+test('狗册比较建议：覆盖 5 个需留意维度，无禁用/诊断/猫语', () => {
+  assert.deepEqual(Object.keys(dogAdvice).sort(), ['D11', 'D13', 'D14', 'D15', 'D2']);
   assert.ok(dogAdvice.D11.suggestion.includes('个人空间'));
   assert.ok(dogAdvice.D11.suggestion.includes('护食'));
   assert.deepEqual(validateCompareAdvice(dogAdvice, CAT_SPECIFIC_WORDS), []);

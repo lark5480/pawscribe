@@ -4,10 +4,10 @@ import { decodeVector } from '../lib/engine/codec';
 test('首页与关于页可访问，三条免责声明齐全', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: '猫狗性格志' })).toBeVisible();
-  await expect(page.getByRole('link', { name: '开始测试' })).toBeVisible();
-  await expect(page.getByRole('link', { name: '关于与隐私' })).toBeVisible();
+  await expect(page.getByRole('link', { name: '开始测猫' })).toBeVisible();
+  await expect(page.getByRole('link', { name: '关于', exact: true })).toBeVisible();
 
-  await page.getByRole('link', { name: '关于与隐私' }).click();
+  await page.getByRole('link', { name: '关于', exact: true }).click();
   await expect(page).toHaveURL(/\/about$/);
   await expect(page.getByRole('heading', { name: '关于与隐私' })).toBeVisible();
   await expect(
@@ -23,13 +23,20 @@ test('首页与关于页可访问，三条免责声明齐全', async ({ page }) 
 
 test('首页提供样例档案入口，指向真实结果页', async ({ page }) => {
   await page.goto('/');
-  const sample = page.getByRole('link', { name: /先看一份样例档案：/ });
+  const sample = page.getByRole('link', { name: /看完整档案/ });
   await expect(sample).toBeVisible();
   await expect(sample).toHaveAttribute('href', /^\/result\/[0-9A-Z]+$/);
 
   await sample.click();
   await expect(page.getByRole('heading', { name: '停不下来的探险家' })).toBeVisible();
   await expect(page.getByRole('heading', { name: '15 维行为画像' })).toBeVisible();
+});
+
+test('首页提供样例档案与按代码对照入口', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: '它们能不能处得来' })).toBeVisible();
+  await expect(page.getByLabel('你的结果代码')).toBeVisible();
+  await expect(page.getByLabel('TA 的结果代码')).toBeVisible();
 });
 
 test('首页轨迹入口显示最近一次测试时间', async ({ page }) => {
@@ -45,7 +52,8 @@ test('首页轨迹入口显示最近一次测试时间', async ({ page }) => {
     localStorage.setItem('pawscribe-history-v1', JSON.stringify({ version: 1, records: [record] }));
   });
   await page.goto('/');
-  await expect(page.getByRole('link', { name: /历史轨迹 · (今天|昨天|\d+ 天前)/ })).toBeVisible();
+  await expect(page.getByText(/猫册 · 0 · 最近一次 (今天|昨天|\d+ 天前)/)).toBeVisible();
+  await expect(page.getByRole('link', { name: '轨迹' })).toBeVisible();
 });
 
 test('结果页显示上次测试间隔，并提供再测入口', async ({ page }) => {
@@ -187,4 +195,89 @@ test('双宠对照计算合作度，跨物种明确拒绝', async ({ page }) => 
 
   await page.goto('/compare?speciesA=cat&speciesB=dog&a=0&b=0');
   await expect(page.getByRole('heading', { name: '跨物种不能做维度距离对照' })).toBeVisible();
+});
+
+test('对照页支持手动输入两份结果代码', async ({ page }) => {
+  await page.goto('/compare');
+  await page.getByLabel('你的结果代码').fill('0');
+  await page.getByLabel('TA 的结果代码').fill('8jjoq');
+  await page.getByRole('button', { name: '开始对照' }).click();
+  await expect(page).toHaveURL(/\/compare\?species=cat&a=0&b=8JJOQ$/);
+  await expect(page.getByText(/^15 维距离/)).toBeVisible();
+
+  await page.goto('/compare?a=0');
+  await expect(page.getByLabel('TA 的结果代码')).toBeVisible();
+  await expect(page.getByLabel('你的结果代码')).toHaveCount(0);
+});
+
+test('答题页点上一题时保留已选状态', async ({ page }) => {
+  await page.goto('/test');
+  const firstQuestion = await page.getByRole('heading', { level: 1 }).textContent();
+  await page.locator('main button').filter({ hasNotText: '上一题' }).first().click();
+  await expect(page.getByText(/第 2 \/ 45 题/)).toBeVisible();
+
+  await page.getByRole('button', { name: '上一题' }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(firstQuestion ?? '');
+  await expect(page.locator('button[aria-pressed="true"]')).toHaveCount(1);
+});
+
+test('刷新后恢复进度并提示，可重新开始', async ({ page }) => {
+  await page.goto('/test');
+  const option = () => page.locator('main button').filter({ hasNotText: '上一题' }).first();
+  await option().click();
+  await option().click();
+  await expect(page.getByText(/第 3 \/ 45 题/)).toBeVisible();
+
+  await page.reload();
+  await expect(page.getByText(/已恢复上次进度（第 3 \/ 49 步）/)).toBeVisible();
+  await page.getByRole('button', { name: '重新开始' }).click();
+  await expect(page.getByText(/第 1 \/ 45 题/)).toBeVisible();
+});
+
+test('轨迹页在两条记录时展示 15 维趋势矩阵', async ({ page }) => {
+  const high = decodeVector('8JJOQ');
+  if (!high) throw new Error('8JJOQ 无法解码');
+  await page.addInitScript(
+    ({ high }) => {
+      const now = Date.now();
+      localStorage.setItem(
+        'pawscribe-history-v1',
+        JSON.stringify({
+          version: 1,
+          records: [
+            {
+              id: 'r2',
+              species: 'cat',
+              petId: 'cat-default',
+              code: '8JJOQ',
+              vector: high,
+              testedAt: new Date(now - 86400000).toISOString(),
+            },
+            {
+              id: 'r1',
+              species: 'cat',
+              petId: 'cat-default',
+              code: '0',
+              vector: Array(15).fill(0),
+              testedAt: new Date(now - 10 * 86400000).toISOString(),
+            },
+          ],
+        }),
+      );
+    },
+    { high },
+  );
+  await page.goto('/trace');
+  await expect(page.getByRole('heading', { name: '15 维趋势' })).toBeVisible();
+  await expect(page.getByText('从左到右由旧到新')).toBeVisible();
+});
+
+test('结果页解释判定依据，并提供对照入口', async ({ page }) => {
+  await page.goto('/result/8JJOQ');
+  await expect(page.getByRole('heading', { name: '为什么是这个类型' })).toBeVisible();
+  await expect(page.getByText(/15 维里有 \d+ 维与模板一致/)).toBeVisible();
+  await expect(page.getByRole('link', { name: '和朋友的毛孩对照' })).toHaveAttribute(
+    'href',
+    '/compare?species=cat&a=8JJOQ',
+  );
 });

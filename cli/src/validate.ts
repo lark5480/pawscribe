@@ -79,7 +79,7 @@ if (specialErrors.length === 0) console.log('OK：兜底型与隐藏型文案通
 else specialErrors.forEach(e => console.log('ERROR:', e));
 
 console.log('\n=== 比较建议校验 ===');
-if (adviceErrors.length === 0) console.log('OK：比较建议维度与文案通过');
+if (adviceErrors.length === 0) console.log('OK：' + Object.keys(adviceData).length + ' 维比较建议通过：' + Object.keys(adviceData).join(' / '));
 else adviceErrors.forEach(e => console.log('ERROR:', e));
 
 console.log('\n=== 狗册题库校验 ===');
@@ -134,7 +134,7 @@ console.log('\n=== 狗册比较建议校验 ===');
 if (!dogAdviceData) {
   console.log('SKIP：content/compare-advice-dog.json 不存在');
 } else if (dogAdviceErrors.length === 0) {
-  console.log('OK：D11 建议通过，覆盖个人空间与护食，无禁用词/诊断词/猫册专属词');
+  console.log('OK：' + Object.keys(dogAdviceData).length + ' 维比较建议通过：' + Object.keys(dogAdviceData).join(' / ') + '；无禁用词/诊断词/猫册专属词');
 } else {
   dogAdviceErrors.forEach(e => console.log('ERROR:', e));
 }

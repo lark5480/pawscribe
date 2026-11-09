@@ -51,7 +51,7 @@ function assertVector(vector: Vector, label: string): void {
   }
 }
 
-// 双方同一维都为 H 时记为冲突；其他情况不产生冲突
+// 双方同一维都为 H 时记为同档；是否为需要留意的张力，由内容层的建议覆盖范围决定
 export function compareVectors(a: Vector, b: Vector): CompareResult {
   assertVector(a, 'a');
   assertVector(b, 'b');
@@ -67,5 +67,17 @@ export function compareVectors(a: Vector, b: Vector): CompareResult {
     distance,
     cooperation: Math.round((1 - distance / 30) * 100),
     conflicts,
+  };
+}
+
+// 「同处 H 档」不等于冲突：有建议覆盖的维度记为张力，其余双高维度是相处同频
+export function splitShared(
+  shared: CompareConflict[],
+  adviceDims: string[],
+): { tension: CompareConflict[]; resonance: CompareConflict[] } {
+  const set = new Set(adviceDims);
+  return {
+    tension: shared.filter((c) => set.has(c.dim)),
+    resonance: shared.filter((c) => !set.has(c.dim)),
   };
 }

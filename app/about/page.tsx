@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <main className="mx-auto max-w-3xl px-6 py-12">
+    <main id="main" tabIndex={-1} className="mx-auto max-w-3xl px-6 py-12">
       <a href="/" className="mb-8 inline-block text-sm text-stone-400 underline">
         ← 返回首页
       </a>

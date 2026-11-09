@@ -9,6 +9,7 @@ import { diffRecords } from '@/lib/engine/trace';
 import type { TraceRecord } from '@/lib/engine/trace';
 import { clearHistoryForSpecies, readHistory, removeHistoryRecord } from '@/lib/store/history';
 import type { HistoryRead } from '@/lib/store/history';
+import TraceMatrix from '@/components/domain/TraceMatrix';
 import SpeciesPreparing from '@/components/domain/SpeciesPreparing';
 import type { Species } from '@/lib/engine/types';
 
@@ -89,7 +90,7 @@ export default function TracePage() {
   }
 
   if (!state || !species) {
-    return <main className="mx-auto max-w-2xl px-6 py-16 text-center text-stone-400">加载中…</main>;
+    return <main id="main" tabIndex={-1} className="mx-auto max-w-2xl px-6 py-16 text-center text-stone-400">加载中…</main>;
   }
 
   const data = getSpeciesData(species);
@@ -107,7 +108,7 @@ export default function TracePage() {
   const diff = latest && base ? diffRecords(base, latest, data.dimensions.map((d) => d.name)) : null;
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-12">
+    <main id="main" tabIndex={-1} className="mx-auto max-w-2xl px-6 py-12">
       <a href="/" className="mb-8 inline-block text-sm text-stone-400 underline">← 返回首页</a>
       <p className="mb-2 text-sm font-medium tracking-widest text-amber-700">TRACE</p>
       <h1 className="mb-3 text-3xl font-bold">纵向轨迹</h1>
@@ -188,6 +189,17 @@ export default function TracePage() {
                         <li key={i} className="text-sm leading-relaxed text-stone-700">{line}</li>
                       ))}
                     </ul>
+                  </div>
+
+                  <div className="mb-8 rounded-2xl border border-stone-200 bg-white p-8">
+                    <h2 className="mb-2 text-lg font-bold">15 维趋势</h2>
+                    <p className="mb-4 text-sm leading-relaxed text-stone-500">
+                      每一行是一维，色块越深档位越高。
+                    </p>
+                    <TraceMatrix
+                      records={records.filter((r) => r.petId === latest.petId).slice().reverse()}
+                      dimensions={data.dimensions}
+                    />
                   </div>
 
                   <div className="mb-8 rounded-2xl border border-stone-200 bg-white p-8">
