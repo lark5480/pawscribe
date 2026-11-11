@@ -110,7 +110,7 @@ docs/                PRD 与调研快照
 - 轨迹页提供 15 维 × 历次记录的趋势矩阵；答题页支持已选高亮与续答提示。
 - 纯客户端；无账号、无数据库、无服务端状态。
 - CI：GitHub Actions 运行 verify（typecheck + lint + 内容校验 + 单测 + build）与 Playwright Chromium 冒烟。
-- 部署：EdgeOne Makers（免费版），构建命令 `npm run build`，输出 `.next`；当前使用预览链接（`eo_token` 3 小时有效），未绑定自定义域名。
+- 部署：EdgeOne Makers（免费版），构建命令 `npm run build`，输出 `.next`。免费部署是带 `eo_token` 的预览链（约 3 小时有效），**没有长期公开地址**：裸域名对不带 token 的请求返回 401，微信等爬虫抓不到页面，链接封面预览不可用；分享走结果页内长按保存分享卡。对外入口以本仓库为准，演示需新鲜预览链。
 - 许可：MIT。
 
 ## 文档

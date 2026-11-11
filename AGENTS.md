@@ -131,9 +131,13 @@ CI：`.github/workflows/ci.yml` 在 push `main`/`dev` 与 PR `main` 时运行 ve
 | `edgeone.json` | `nodeFunctionsConfig.maxDuration = 120` **必须保留** |
 
 **部署步骤**：
-1. 推代码到 GitHub（`dev` → `master`）。
+1. 改动进 `dev`，确认后开 PR 合入 `main`（`main` 为可发布分支）。
 2. EdgeOne Makers 控制台新建项目 → 导入仓库 → 构建命令 `npm run build` → 输出 `.next`。
-3. 自定义域名 + 免费 SSL。
+3. 免费部署产出带 `eo_token` 的预览链（约 3 小时有效），**无长期公开地址**；自定义域名需备案，未做。
+
+**平台约束（2026-11-11 核实）**：
+- 裸域名对不带 token 的请求返回 401，微信等爬虫抓不到页面 → **链接封面预览不可用**，配 `NEXT_PUBLIC_SITE_URL` 也救不了爬虫；分享以结果页内长按保存分享卡为准。
+- 重新签发 token 只是给**同一个部署**续期。代码合入后必须在控制台重新触发构建，否则线上仍是旧构建。
 
 ---
 
