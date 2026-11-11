@@ -93,17 +93,13 @@ const DOG_DATA: SpeciesData = {
   dimensionSources: dogSourceData as SpeciesData['dimensionSources'],
 };
 
-const SPECIES_DATA: Record<Species, SpeciesData | null> = {
+const SPECIES_DATA: Record<Species, SpeciesData> = {
   cat: CAT_DATA,
   dog: DOG_DATA,
 };
 
-export function getSpeciesData(species: Species): SpeciesData | null {
-  return SPECIES_DATA[species] ?? null;
-}
-
-export function hasSpeciesData(species: Species): boolean {
-  return getSpeciesData(species) !== null;
+export function getSpeciesData(species: Species): SpeciesData {
+  return SPECIES_DATA[species];
 }
 
 // 保留猫册默认导出，供既有调用方与 CLI 使用

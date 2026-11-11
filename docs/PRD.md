@@ -143,11 +143,11 @@
 | **M3 社交** | D7 对人依恋亲近 | 你回来它照旧睡 / 会回应 / 时刻踩奶 | 赫尔辛基「Sociability to humans」 · DPQ「Companionability」 |
 | | D8 同类社交 | 见同类炸毛 / 观察后共处 / 主动凑过去 | 赫尔辛基「Sociability to cats」 · DPQ「Aggression to dogs」反向 |
 | | D9 社交主动性 | 客人来就躲 / 观望 / 第一个冲过去 | 赫尔辛基「Sociability to humans」 · DPQ「Social attraction」 |
-| **M4 自主与领地** | D10 独立自主 | 贴着人走 / 你走它也待着 / 大部分时间自己待 | DPQ「Nonsocial fear」反向 · 猫的独立性 |
+| **M4 自主与领地** | D10 独立自主 | 贴着人走 / 你走它也待着 / 大部分时间自己待 | DPQ「Nonsocial fear」反向 · 猫：独立性待补文献 / 狗：C-BARQ「Attachment/attention-seeking」反向 |
 | | D11 领地与护食 | 资源被碰就走 / 会警告 / 死死护住抢食 | 赫尔辛基「Aggression to humans」 · DPQ「Situational aggression」 |
-| | D12 变动耐受 | 换家具就乱 / 适应一两天 / 搬到哪都照样吃睡 | 赫尔辛基：环境反复变化是猫的压力源 · DPQ「adapts easily」反向 |
+| | D12 变动耐受 | 换家具就乱 / 适应一两天 / 搬到哪都照样吃睡 | 赫尔辛基：环境反复变化是猫的压力源 · DPQ「adapts easily」反向；狗另取 C-BARQ「Nonsocial fear」的陌生物体与情境条目反向 |
 | **M5 情绪与应对** | D13 易激惹度 | 被冒犯会走开 / 会瞪会哼 / 咬抓扑 | 赫尔辛基「Aggression to humans」 · DPQ「General aggression」 |
-| | D14 挫折耐受 | 得不到就放弃 / 试试就放弃 / 反复尝试叫扒砸 | 动物福利研究：挫折诱发攻击与 redirected aggression |
+| | D14 挫折耐受 | 得不到就放弃 / 试试就放弃 / 反复尝试叫扒砸 | Kleszcz 2022 挫折反应综述：受阻时加大尝试或发声（Animals 12(3):281） |
 | | D15 冲动性 | 先观望很久 / 犹豫后行动 / 立刻扑抢冲 | Feline Five「Impulsiveness」 · Volhard「Elevation」 |
 
 **设计取舍（写在这里，因为它们决定了出题）**：
@@ -350,7 +350,7 @@ similarity = max(0, round((1 - distance / 30) * 100))
 | 分层 | `lib/engine/*` 纯函数层（无 IO、无时间、无全局状态），客户端与服务端共用同一份实现 |
 | 分享卡 | Canvas 生成 1200×630 PNG |
 | 产物隔离 | 目标：dev / build / e2e 各用独立 `distDir`；当前未配置，dev 与 build 共用 `.next` |
-| CI | 已配置 `.github/workflows/ci.yml`：verify（`typecheck` / `cli:validate` / `test` / `build`）+ e2e（Playwright Chromium）；lint / format 尚未接入 |
+| CI | 已配置 `.github/workflows/ci.yml`：verify（`typecheck` / `lint` / `cli:validate` / `test` / `build`）+ e2e（Playwright Chromium）；format 尚未接入 |
 | 许可与署名 | MIT + GitHub handle（不用真名） |
 | 文档分层 | `README.md`（人）/ `AGENTS.md`（AI）/ `docs/`（长文），「一个事实一个权威源」 |
 
@@ -429,7 +429,7 @@ interface StressQuestion {
 
 - 狗册六类资产已于 2026-11-03 复核就绪；题目正文以 `content/quiz-dog.json` 为准，五题复核记录见 §17.5。
 - `lib/engine/*` 的计分、匹配、编码、diff、compare 均为纯函数，猫狗共用。
-- 数据读取统一走 `getSpeciesData(species)`；物种数据不存在时返回空，页面显示「狗册准备中」，**不伪造占位题目或文案**。
+- 数据读取统一走 `getSpeciesData(species)`；猫狗两册数据恒在，直接返回物种数据，**不伪造占位题目或文案**。
 
 ---
 
@@ -449,19 +449,22 @@ interface StressQuestion {
 
 | # | 标准 |
 |---|---|
-| 6 | 开始 → 完成 ≥70% |
-| 7 | 结果页分享率 ≥25% |
+| 6 | 开始 → 完成 ≥70%（上线后跟踪，不作发布门禁） |
+| 7 | 结果页分享率 ≥25%（上线后跟踪，不作发布门禁） |
 | 8 | 全流程服务端调用 = 0 |
 | 9 | 压力提示文案经兽医/行为学专业人士评审通过 |
 
 > 标准 1 是这个项目**最诚实也最脆弱**的一环：15 维有学术依据，但「主人自评」在娱乐测试语境下的信效度**从未被验证过**。它按下不表的部分（复测信度）改为上线后持续跟踪的研究里程碑，不阻塞发布。
 
-> **发布门禁（2026-11-03 调整）**：能否发布不看标准 1，看三条——
-> ① **CI 全绿**：`.github/workflows/ci.yml` 的 `typecheck` / `cli:validate` / `test` / `build` 全部通过；
-> ② **关键路径冒烟**：Playwright（Chromium）自动覆盖首页 / 关于、结果页雷达与分享卡、猫册 49 步测试流、狗册结果、双宠对照与跨物种拒绝；分享面板等无法稳定自动化的部分保留人工清单；
-> ③ **45 题完成率可观测**：标准 6 的完成率有可读取的统计口径，不是凭印象判断。
+> **发布门禁（2026-11-11 调整）**：能否发布不看标准 1，也不看标准 6/7，看两条——
+> ① **CI 全绿**：`.github/workflows/ci.yml` 的 `typecheck` / `lint` / `cli:validate` / `test` / `build` 全部通过；
+> ② **关键路径冒烟**：Playwright（Chromium）自动覆盖首页 / 关于、结果页雷达与分享卡、猫册与狗册 49 步测试流、狗册结果、两册类型库与维度出处页、双宠对照与跨物种拒绝；分享面板等无法稳定自动化的部分保留人工清单。
+
+> 原门禁③「45 题完成率可观测」**降级为上线后研究里程碑**：本站纯客户端、无服务端状态（红线①），拿不到跨用户完成率。标准 6/7 与标准 1 一样上线后跟踪，不阻塞发布。
 
 > 验收记录（2026-11-03）：§11 的 1–9 项目前均未形成可复核的验收记录；本文只定义标准，不声称已达标。
+
+> 验收记录（2026-11-11）：门禁③降级为上线后研究里程碑；lint 接入 CI；`cli:validate` 增加猫狗维度出处齐备性校验（「待补文献」是显式标注，不拦截）；e2e 补齐狗册答题流与两册类型库 / 维度出处页；狗册 D10/D12/D14 出处换成可核实文献，猫册 D14 同源模糊出处一并替换、D10 独立性改为显式待补标注。
 
 ---
 

@@ -10,7 +10,6 @@ import type { TraceRecord } from '@/lib/engine/trace';
 import { clearHistoryForSpecies, readHistory, removeHistoryRecord } from '@/lib/store/history';
 import type { HistoryRead } from '@/lib/store/history';
 import TraceMatrix from '@/components/domain/TraceMatrix';
-import SpeciesPreparing from '@/components/domain/SpeciesPreparing';
 import type { Species } from '@/lib/engine/types';
 
 const LEVEL_LABEL = ['L', 'M', 'H'];
@@ -94,7 +93,6 @@ export default function TracePage() {
   }
 
   const data = getSpeciesData(species);
-  if (!data) return <SpeciesPreparing species={species} />;
 
   const testHref = species === 'dog' ? '/test?species=dog' : '/test';
   // 轨迹按物种隔离：猫狗记录不混在同一个列表里

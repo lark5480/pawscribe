@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import { decodeVector } from '../lib/engine/codec';
 
 test('首页与关于页可访问，三条免责声明齐全', async ({ page }) => {
@@ -160,11 +161,11 @@ test('复制与系统分享都不可用时，展示可手动复制的链接', as
   await expect(page.getByText('长按上方文字选中链接后复制')).toBeVisible();
 });
 
-test('猫册测试流可完成 49 步并落到结果页', async ({ page }) => {
+async function completeQuiz(page: Page, species: 'cat' | 'dog'): Promise<string[]> {
   const pageErrors: string[] = [];
   page.on('pageerror', (err) => pageErrors.push(err.message));
 
-  await page.goto('/test');
+  await page.goto(species === 'dog' ? '/test?species=dog' : '/test');
   await expect(page.getByText(/第 1 \/ 45 题/)).toBeVisible();
 
   for (let i = 0; i < 49; i++) {
@@ -172,8 +173,19 @@ test('猫册测试流可完成 49 步并落到结果页', async ({ page }) => {
     await expect(option).toBeVisible();
     await option.click();
   }
+  return pageErrors;
+}
 
+test('猫册测试流可完成 49 步并落到结果页', async ({ page }) => {
+  const pageErrors = await completeQuiz(page, 'cat');
   await expect(page).toHaveURL(/\/result\/[0-9A-Z]+$/);
+  await expect(page.getByRole('heading', { name: '15 维行为画像' })).toBeVisible();
+  expect(pageErrors).toEqual([]);
+});
+
+test('狗册测试流可完成 49 步并落到狗册结果页', async ({ page }) => {
+  const pageErrors = await completeQuiz(page, 'dog');
+  await expect(page).toHaveURL(/\/dog\/result\/[0-9A-Z]+$/);
   await expect(page.getByRole('heading', { name: '15 维行为画像' })).toBeVisible();
   expect(pageErrors).toEqual([]);
 });
@@ -186,6 +198,33 @@ test('狗册结果页使用狗册数据渲染雷达', async ({ page }) => {
     'href',
     '/library?species=dog',
   );
+});
+
+test('类型库两册均渲染真实类型，标题不再是「狗册准备中」', async ({ page }) => {
+  await page.goto('/library');
+  await expect(page.getByRole('heading', { name: '类型库', exact: true })).toBeVisible();
+  await expect(page.locator('#DART')).toBeVisible();
+  await expect(page.getByText('准备中')).toHaveCount(0);
+
+  await page.goto('/library?species=dog');
+  await expect(page).toHaveTitle('类型库 · 猫狗性格志');
+  await expect(page.locator('#LURK')).toBeVisible();
+  await expect(page.locator('#HOLD')).toBeVisible();
+  await expect(page.getByText('准备中')).toHaveCount(0);
+});
+
+test('维度出处页两册均渲染 15 维出处，狗册 D10 出处逐字可见', async ({ page }) => {
+  await page.goto('/dimensions');
+  await expect(page.getByRole('heading', { name: '维度出处' })).toBeVisible();
+  await expect(page.locator('article')).toHaveCount(15);
+
+  await page.goto('/dimensions?species=dog');
+  await expect(page).toHaveTitle('维度出处 · 猫狗性格志');
+  await expect(page.locator('article')).toHaveCount(15);
+  const d10 = page.locator('article').filter({ hasText: 'D10' });
+  await expect(d10).toContainText('出处：');
+  await expect(d10).toContainText('狗的独立性');
+  await expect(page.getByText('准备中')).toHaveCount(0);
 });
 
 test('双宠对照计算合作度，跨物种明确拒绝', async ({ page }) => {
@@ -280,4 +319,24 @@ test('结果页解释判定依据，并提供对照入口', async ({ page }) => 
     'href',
     '/compare?species=cat&a=8JJOQ',
   );
+});
+
+test('首页测狗入口与对照狗册切换无条件可用', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByRole('link', { name: '测狗', exact: true })).toHaveAttribute(
+    'href',
+    '/test?species=dog',
+  );
+  const dogToggle = page.getByRole('button', { name: '狗册', exact: true });
+  await expect(dogToggle).toBeEnabled();
+  await dogToggle.click();
+  await expect(dogToggle).toHaveClass(/bg-amber-700/);
+});
+
+test('无效结果代码在猫狗两册都显示结果不存在', async ({ page }) => {
+  for (const path of ['/result/invalid-code', '/dog/result/invalid-code']) {
+    await page.goto(path);
+    await expect(page.getByRole('heading', { name: '结果不存在' })).toBeVisible();
+    await expect(page.getByRole('link', { name: '重新测试' })).toBeVisible();
+  }
 });

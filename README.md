@@ -50,8 +50,9 @@ npm run cli:validate   # 猫狗两册内容校验
 | `npm test` | 运行 `cli/src/engine.test.ts` |
 | `npm run test:e2e` | 运行 Playwright Chromium 冒烟（需先 `npm run build`） |
 | `npm run typecheck` | `tsc --noEmit` |
-| `npm run cli:validate` | 校验猫册、狗册全部内容资产与禁用词 |
-| `npm run cli:types` | 生成 16 型向量，输出到 stdout（可重定向到 `content/types-raw.json`） |
+| `npm run lint` | ESLint（`next/core-web-vitals`，覆盖 `app` / `lib` / `components`） |
+| `npm run cli:validate` | 校验猫册、狗册全部内容资产、维度出处齐备性与禁用词 |
+| `npm run cli:types` | 生成 16 型向量，输出到 stdout |
 | `npm run cli:quiz` / `npm run cli:quiz:dog` | 生成/校验猫册、狗册 45 题 |
 | `npm run cli:copy` / `npm run cli:copy:dog` | 生成/校验猫册、狗册 16 型文案 |
 | `npm run cli:stress` / `npm run cli:stress:dog` | 生成/校验猫册、狗册压力题 |
@@ -108,7 +109,7 @@ docs/                PRD 与调研快照
 - 双宠对照支持手动输入两份结果代码；同处 H 档的维度分为「需要留意 / 相处同频」，建议覆盖 D2/D11/D13/D14/D15。
 - 轨迹页提供 15 维 × 历次记录的趋势矩阵；答题页支持已选高亮与续答提示。
 - 纯客户端；无账号、无数据库、无服务端状态。
-- CI：GitHub Actions 运行 verify（typecheck + 内容校验 + 单测 + build）与 Playwright Chromium 冒烟。
+- CI：GitHub Actions 运行 verify（typecheck + lint + 内容校验 + 单测 + build）与 Playwright Chromium 冒烟。
 - 部署：EdgeOne Makers（免费版），构建命令 `npm run build`，输出 `.next`；当前使用预览链接（`eo_token` 3 小时有效），未绑定自定义域名。
 - 许可：MIT。
 

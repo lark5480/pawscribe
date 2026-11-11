@@ -6,11 +6,11 @@ import { HIDDEN_DIMENSIONS, manhattan, matchType, isHiddenType, explainMatch } f
 import { resolveTypeCopy } from '../../lib/engine/result.ts';
 import { compareVectors, resolveCompareSpecies, splitShared } from '../../lib/engine/compare.ts';
 import { encodeVector, decodeVector } from '../../lib/engine/codec.ts';
-import { validateQuiz, validateCopy, validateStress, validateSpecial, validateCompareAdvice, validateAnchors, CAT_SPECIFIC_WORDS } from '../../lib/engine/validator.ts';
-import type { DimensionAnchor } from '../../lib/engine/validator.ts';
+import { validateQuiz, validateCopy, validateStress, validateSpecial, validateCompareAdvice, validateAnchors, validateDimensionSources, CAT_SPECIFIC_WORDS } from '../../lib/engine/validator.ts';
+import type { DimensionAnchor, DimensionSources } from '../../lib/engine/validator.ts';
 import { diffRecords } from '../../lib/engine/trace.ts';
 import { createQuizOrder, isValidQuizOrder } from '../../lib/engine/order.ts';
-import { getSpeciesData, hasSpeciesData } from '../../lib/engine/data.ts';
+import { getSpeciesData } from '../../lib/engine/data.ts';
 import { daysSince, latestRecency, recencyLabel } from '../../lib/engine/time.ts';
 import type { TraceRecord } from '../../lib/engine/trace.ts';
 import {
@@ -60,6 +60,8 @@ const dogStress = JSON.parse(readFileSync(new URL('../../content/stress-dog.json
   levels: Array<{ level: string; label: string; text: string }>;
 };
 const dogAdvice = JSON.parse(readFileSync(new URL('../../content/compare-advice-dog.json', import.meta.url), 'utf8')) as Record<string, { suggestion: string }>;
+const catSources = JSON.parse(readFileSync(new URL('../../content/dimension-sources.json', import.meta.url), 'utf8')) as DimensionSources;
+const dogSources = JSON.parse(readFileSync(new URL('../../content/dimension-sources-dog.json', import.meta.url), 'utf8')) as DimensionSources;
 
 const toTemplate = (vector: Vector): TypeTemplate => ({ index: 0, vector, vectorStr: '' });
 const toCopy = (code: string): TypeCopy => ({ index: 0, code, name: code, vector: '', hook: '', tips: [], breed: '' });
@@ -663,8 +665,8 @@ test('物种数据：猫狗双册完整接入，狗册资产均为狗版', () =>
   assert.deepEqual(dog.stressLevels, dogStress.levels);
   assert.deepEqual(dog.hiddenVector, [0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0]);
 
-  assert.equal(hasSpeciesData('cat'), true);
-  assert.equal(hasSpeciesData('dog'), true);
+  assert.equal(getSpeciesData('cat').species, 'cat');
+  assert.equal(getSpeciesData('dog').species, 'dog');
 });
 
 test('隐藏型维度按物种参数化：猫 D4/D5/D6，狗 D4/D6/D14', () => {
@@ -940,6 +942,39 @@ test('校验器能拦截狗册的猫语残留、缺失锚点与禁用词', () =>
     d.id === 'D1' ? { ...d, highDesc: '绝对会主动靠近' } : d,
   );
   assert.ok(validateAnchors(bannedAnchor).some((e) => e.includes('含禁用词「绝对」')));
+});
+
+test('猫狗维度出处：15 维齐备、引用文献非空，校验通过', () => {
+  for (const sources of [catSources, dogSources]) {
+    assert.equal(sources.dimensions.length, 15);
+    assert.ok(sources.references.length > 0);
+    assert.deepEqual(validateDimensionSources(sources), []);
+  }
+});
+
+test('出处校验器拦截缺 id / 空出处 / 空文献，但放行「待补文献」标注', () => {
+  const missing = dogSources.dimensions.filter((d) => d.id !== 'D15');
+  assert.ok(validateDimensionSources({ ...dogSources, dimensions: missing }).some((e) => e.includes('D15 缺少出处')));
+
+  const blank = dogSources.dimensions.map((d) => (d.id === 'D10' ? { ...d, source: '   ' } : d));
+  assert.ok(validateDimensionSources({ ...dogSources, dimensions: blank }).some((e) => e.includes('D10 缺少论文出处')));
+
+  const duplicated = [...dogSources.dimensions, dogSources.dimensions[0]];
+  assert.ok(validateDimensionSources({ ...dogSources, dimensions: duplicated }).some((e) => e.includes('D1 出处重复')));
+
+  assert.ok(validateDimensionSources({ ...dogSources, references: [] }).some((e) => e.includes('引用文献为空')));
+
+  const blankRef = dogSources.references.map((r, i) => (i === 0 ? { ...r, detail: '' } : r));
+  assert.ok(validateDimensionSources({ ...dogSources, references: blankRef }).some((e) => e.includes('缺少详情')));
+
+  // 找不到可靠依据时显式标注是合法终态，校验器不得逼向编造文献
+  const withPending = {
+    ...dogSources,
+    dimensions: dogSources.dimensions.map((d) =>
+      d.id === 'D10' ? { ...d, source: '狗的独立性（待补文献）' } : d,
+    ),
+  };
+  assert.deepEqual(validateDimensionSources(withPending), []);
 });
 
 test('狗册 16 型文案：合同通过、复用猫册向量、代码与猫册并集唯一', () => {

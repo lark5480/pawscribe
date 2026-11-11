@@ -6,7 +6,6 @@ import { compareVectors, resolveCompareSpecies, splitShared } from '@/lib/engine
 import type { CompareSpeciesDecision } from '@/lib/engine/compare';
 import { getSpeciesData } from '@/lib/engine/data';
 import CompareEntry from '@/components/domain/CompareEntry';
-import SpeciesPreparing from '@/components/domain/SpeciesPreparing';
 import type { Species, Vector } from '@/lib/engine/types';
 
 interface CompareQuery {
@@ -58,7 +57,6 @@ export default function ComparePage() {
 
   const species: Species = decision.species;
   const data = getSpeciesData(species);
-  if (!data) return <SpeciesPreparing species={species} />;
 
   const querySuffix = species === 'dog' ? '?species=dog' : '';
 

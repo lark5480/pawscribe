@@ -37,7 +37,7 @@ function sanitizeAnswers(value: unknown, map: Map<number, Question | StressQuest
 
 export default function TestFlow({ species }: { species: Species }) {
   const router = useRouter();
-  const data = getSpeciesData(species)!;
+  const data = getSpeciesData(species);
   const questions = data.questions;
   const stressQuestions = data.stressQuestions;
   const quizIds = useMemo(() => questions.map((q) => q.id), [questions]);

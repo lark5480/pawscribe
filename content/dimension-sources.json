@@ -47,7 +47,7 @@
     },
     {
       "id": "D10",
-      "source": "DPQ「Nonsocial fear」反向 · 猫的独立性",
+      "source": "DPQ「Nonsocial fear」反向 · 猫的独立性（待补文献）",
       "note": ""
     },
     {
@@ -67,8 +67,8 @@
     },
     {
       "id": "D14",
-      "source": "动物福利研究（挫折诱发攻击与 redirected aggression）",
-      "note": ""
+      "source": "挫折反应综述：受阻时加大尝试或发声（Kleszcz et al. 2022）",
+      "note": "综述记录受阻后「加大尝试或发声」，对应本维 H 端；本维只描述坚持程度，不推断原因"
     },
     {
       "id": "D15",
@@ -100,6 +100,10 @@
     {
       "label": "斑马雀追踪研究",
       "detail": "Barrett et al., Royal Society Open Science。41 只、两年追踪；boldness 与 persistence 在两年内保持一致。"
+    },
+    {
+      "label": "Kleszcz 2022（挫折反应综述）",
+      "detail": "Kleszcz / Cholewińska / Front / Pacoń / Bodkowski / Janczak / Dorobisz. Review on Selected Aggression Causes and the Role of Neurocognitive Science in the Diagnosis. Animals 12(3):281. DOI 10.3390/ani12030281。同行评审综述，记录受阻时加大尝试或发声、屏障挫折与 displaced aggression。"
     }
   ]
 }
