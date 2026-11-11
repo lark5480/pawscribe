@@ -85,6 +85,7 @@ docs/                PRD + 调研快照
 npm install
 npm run dev              # 本地开发 :3000
 npm run typecheck
+npm run lint             # ESLint（next/core-web-vitals）
 npm test
 npm run build
 npm run cli:validate     # 猫狗两册内容校验
@@ -101,8 +102,8 @@ npm run cli:stress:dog               # 生成/校验狗册压力信号
 npm run cli:advice:dog               # 生成/校验狗册比较建议
 ```
 
-仓库没有 ESLint 配置，**不存在可用的 `npm run lint`**；自检请用 `typecheck` + `cli:validate` + `test` + `build`。
-CI：`.github/workflows/ci.yml` 在 push `main`/`dev` 与 PR `main` 时运行 verify（typecheck / cli:validate / test / build）与 e2e（Playwright Chromium）。
+ESLint 配置为 `.eslintrc.json`（`next/core-web-vitals`，eslint 8 非 flat config），只覆盖 `app` / `lib` / `components`，不含 `cli` / `e2e`。自检请用 `typecheck` + `lint` + `cli:validate` + `test` + `build`；`next build` 自身也会跑 lint。
+CI：`.github/workflows/ci.yml` 在 push `main`/`dev` 与 PR `main` 时运行 verify（typecheck / lint / cli:validate / test / build）与 e2e（Playwright Chromium）。
 
 ---
 

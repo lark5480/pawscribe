@@ -1,19 +1,10 @@
 import type { Metadata } from 'next';
 import { getSpeciesData } from '@/lib/engine/data';
 import { encodeVector } from '@/lib/engine/codec';
-import SpeciesPreparing from '@/components/domain/SpeciesPreparing';
 import type { Species } from '@/lib/engine/types';
 
 export function generateMetadata({ searchParams }: { searchParams: { species?: string } }): Metadata {
   const species: Species = searchParams.species === 'dog' ? 'dog' : 'cat';
-  const data = getSpeciesData(species);
-  if (!data) {
-    return {
-      title: '狗册准备中 · 猫狗性格志',
-      description: '狗册内容尚未上线，当前只开放猫册测试。',
-      robots: { index: false, follow: false },
-    };
-  }
   const name = species === 'dog' ? '狗格' : '猫格';
   const description = '猫狗性格志的类型库：给猫和狗各 16 型档案（' + name + '），以及隐藏型与兜底型的触发说明';
   return {
@@ -27,7 +18,6 @@ export function generateMetadata({ searchParams }: { searchParams: { species?: s
 export default function LibraryPage({ searchParams }: { searchParams: { species?: string } }) {
   const species: Species = searchParams.species === 'dog' ? 'dog' : 'cat';
   const data = getSpeciesData(species);
-  if (!data) return <SpeciesPreparing species={species} />;
 
   const querySuffix = species === 'dog' ? '?species=dog' : '';
   const resultBase = species === 'dog' ? '/dog/result/' : '/result/';

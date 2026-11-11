@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getSpeciesData, hasSpeciesData } from '@/lib/engine/data';
+import { getSpeciesData } from '@/lib/engine/data';
 import { encodeVector } from '@/lib/engine/codec';
 import { matchType } from '@/lib/engine/matching';
 import { resolveTypeCopy } from '@/lib/engine/result';
@@ -12,8 +12,8 @@ import CompareEntry from '@/components/domain/CompareEntry';
 import type { Species } from '@/lib/engine/types';
 
 const CAT_DATA = getSpeciesData('cat');
-const SAMPLE_COPY = CAT_DATA?.typeCopies.find((copy) => copy.code === 'DART');
-const SAMPLE_TEMPLATE = CAT_DATA?.typeTemplates.find((template) => template.index === SAMPLE_COPY?.index);
+const SAMPLE_COPY = CAT_DATA.typeCopies.find((copy) => copy.code === 'DART');
+const SAMPLE_TEMPLATE = CAT_DATA.typeTemplates.find((template) => template.index === SAMPLE_COPY?.index);
 const SAMPLE_LINK =
   SAMPLE_COPY && SAMPLE_TEMPLATE
     ? { name: SAMPLE_COPY.name, href: '/result/' + encodeVector(SAMPLE_TEMPLATE.vector) }
@@ -32,7 +32,6 @@ interface ArchiveItem {
 
 function archiveFor(records: ReturnType<typeof readHistory>['records'], species: Species): ArchiveItem | null {
   const data = getSpeciesData(species);
-  if (!data) return null;
   const own = records.filter((record) => record.species === species);
   if (own.length === 0) return null;
   const latest = own.reduce((a, b) => (Date.parse(b.testedAt) > Date.parse(a.testedAt) ? b : a));
@@ -55,7 +54,6 @@ function archiveFor(records: ReturnType<typeof readHistory>['records'], species:
 export default function Home() {
   const [archives, setArchives] = useState<ArchiveItem[]>([]);
   const [compareChoice, setCompareChoice] = useState<Species | null>(null);
-  const dogReady = hasSpeciesData('dog');
 
   useEffect(() => {
     const { records } = readHistory();
@@ -93,14 +91,12 @@ export default function Home() {
           >
             开始测猫
           </a>
-          {dogReady && (
-            <a
-              href="/test?species=dog"
-              className="rounded-full border border-stone-300 px-8 py-3 text-base font-medium text-stone-700 transition hover:bg-stone-100"
-            >
-              测狗
-            </a>
-          )}
+          <a
+            href="/test?species=dog"
+            className="rounded-full border border-stone-300 px-8 py-3 text-base font-medium text-stone-700 transition hover:bg-stone-100"
+          >
+            测狗
+          </a>
         </div>
         <p className="mt-4 text-xs text-stone-400">45 道题 + 4 道压力信号 · 约 4 分钟 · 结果永久免费</p>
       </section>
@@ -165,9 +161,8 @@ export default function Home() {
           </button>
           <button
             onClick={() => setCompareChoice('dog')}
-            disabled={!dogReady}
             className={
-              'rounded-full px-3 py-1 transition disabled:opacity-40 ' +
+              'rounded-full px-3 py-1 transition ' +
               (compareSpecies === 'dog' ? 'bg-amber-700 text-white' : 'text-stone-500 hover:text-stone-900')
             }
           >

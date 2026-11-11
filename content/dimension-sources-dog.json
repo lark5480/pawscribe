@@ -47,8 +47,8 @@
     },
     {
       "id": "D10",
-      "source": "DPQ「Nonsocial fear」反向 · 狗的独立性（待补文献）",
-      "note": ""
+      "source": "DPQ「Nonsocial fear」反向 · 狗的独立性：C-BARQ「Attachment/attention-seeking」反向",
+      "note": "C-BARQ 该因子测「维持与主人的近距离、主人关注第三方时躁动」，取反向即独立自主"
     },
     {
       "id": "D11",
@@ -57,8 +57,8 @@
     },
     {
       "id": "D12",
-      "source": "DPQ「adapts easily」反向 · 环境变化与狗的行为（待补文献）",
-      "note": ""
+      "source": "DPQ「adapts easily」反向 · C-BARQ「Nonsocial fear」中「unfamiliar objects and situations」条目反向",
+      "note": "C-BARQ 没有专门的变动耐受量表；取非社会性恐惧里「陌生物体与情境」条目反向是我们的翻译取舍，不是原量表的独立因子"
     },
     {
       "id": "D13",
@@ -67,8 +67,8 @@
     },
     {
       "id": "D14",
-      "source": "动物福利研究（挫折诱发攻击与 redirected aggression；具体条目待补文献）",
-      "note": ""
+      "source": "挫折反应综述：受阻时加大尝试或发声（Kleszcz et al. 2022）",
+      "note": "综述记录受阻后「加大尝试或发声」，对应本维 H 端；本维只描述坚持程度，不推断原因"
     },
     {
       "id": "D15",
@@ -90,8 +90,12 @@
       "detail": "Volhard PAT 含 Stability 等 10 项；BreedTools 5 维含 Recovery。二者把 Stability 与 Recovery 分开测量。"
     },
     {
-      "label": "动物福利研究",
-      "detail": "挫折诱发攻击与 redirected aggression 的相关研究；具体条目待补文献。"
+      "label": "Kleszcz 2022（挫折反应综述）",
+      "detail": "Kleszcz / Cholewińska / Front / Pacoń / Bodkowski / Janczak / Dorobisz. Review on Selected Aggression Causes and the Role of Neurocognitive Science in the Diagnosis. Animals 12(3):281. DOI 10.3390/ani12030281。同行评审综述，记录受阻时加大尝试或发声、屏障挫折与 displaced aggression。"
+    },
+    {
+      "label": "C-BARQ（Hsu & Serpell 2003）",
+      "detail": "Hsu & Serpell. Development and validation of a questionnaire for measuring behavior and temperament traits in pet dogs. Journal of the American Veterinary Medical Association 223(9):1293–1300. DOI 10.2460/javma.2003.223.1293。含 Attachment/attention-seeking 与 Nonsocial fear（陌生物体与情境）等因子。"
     }
   ]
 }

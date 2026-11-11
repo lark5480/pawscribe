@@ -14,15 +14,10 @@ const OG_IMAGE = {
   alt: '《猫狗性格志》分享封面：暖纸色背景上，左侧为「猫狗性格志」主标题与「45 题，给你的猫或狗一份会随时间变化的性格档案」副标题，右侧圆牌内并排猫与狗的线描图标。',
 };
 
-function fallbackMetadata(species: Species): Metadata {
-  const ready = getSpeciesData(species) !== null;
-  const title = ready ? '结果不存在 · 猫狗性格志' : '狗册准备中 · 猫狗性格志';
-  const description = ready
-    ? '这个结果链接无效或已过期。可以重新测一次，查看猫或狗的 15 维行为画像。'
-    : '狗册内容尚未上线，当前只开放猫册测试。';
+function fallbackMetadata(): Metadata {
   return {
-    title,
-    description,
+    title: '结果不存在 · 猫狗性格志',
+    description: '这个结果链接无效或已过期。可以重新测一次，查看猫或狗的 15 维行为画像。',
     robots: { index: false, follow: false },
   };
 }
@@ -30,10 +25,9 @@ function fallbackMetadata(species: Species): Metadata {
 // 只按 URL 里的 code 做纯计算，不读写任何服务端状态；物种由路径决定
 export function buildResultMetadata(code: string, species: Species): Metadata {
   const data = getSpeciesData(species);
-  if (!data) return fallbackMetadata(species);
 
   const vector = decodeVector(code);
-  if (!vector) return fallbackMetadata(species);
+  if (!vector) return fallbackMetadata();
 
   try {
     const match = matchType(vector, data.typeTemplates, data.typeCopies, species);
@@ -65,6 +59,6 @@ export function buildResultMetadata(code: string, species: Species): Metadata {
       },
     };
   } catch {
-    return fallbackMetadata(species);
+    return fallbackMetadata();
   }
 }

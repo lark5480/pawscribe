@@ -114,6 +114,33 @@ export function validateAnchors(anchors: DimensionAnchor[]): string[] {
   return errors;
 }
 
+export interface DimensionSources {
+  dimensions: Array<{ id: string; source: string; note?: string }>;
+  references: Array<{ label: string; detail: string }>;
+}
+
+// 只校验齐备性。「待补文献」是显式的诚实标注，不是错误，不得在此拦截
+export function validateDimensionSources(data: DimensionSources): string[] {
+  const errors: string[] = [];
+  if (data.dimensions.length !== 15) errors.push('出处维度数应为 15，实际 ' + data.dimensions.length);
+  const ids = new Set<string>();
+  for (const item of data.dimensions) {
+    if (ids.has(item.id)) errors.push(item.id + ' 出处重复');
+    ids.add(item.id);
+    if (!item.source.trim()) errors.push(item.id + ' 缺少论文出处');
+  }
+  for (let i = 1; i <= 15; i++) {
+    const id = 'D' + i;
+    if (!ids.has(id)) errors.push(id + ' 缺少出处');
+  }
+  if (data.references.length === 0) errors.push('引用文献为空');
+  for (const ref of data.references) {
+    if (!ref.label.trim()) errors.push('引用文献缺少名称');
+    if (!ref.detail.trim()) errors.push('引用文献「' + ref.label + '」缺少详情');
+  }
+  return errors;
+}
+
 export function validateCopy(
   copies: TypeCopy[],
   reservedCodes: string[] = [],

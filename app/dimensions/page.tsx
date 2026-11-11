@@ -1,17 +1,8 @@
 import type { Metadata } from 'next';
 import { getSpeciesData } from '@/lib/engine/data';
-import SpeciesPreparing from '@/components/domain/SpeciesPreparing';
 import type { Species } from '@/lib/engine/types';
 
 export function generateMetadata({ searchParams }: { searchParams: { species?: string } }): Metadata {
-  const species: Species = searchParams.species === 'dog' ? 'dog' : 'cat';
-  if (!getSpeciesData(species)) {
-    return {
-      title: '狗册准备中 · 猫狗性格志',
-      description: '狗册内容尚未上线，当前只开放猫册测试。',
-      robots: { index: false, follow: false },
-    };
-  }
   const description = '猫狗性格志的 15 个行为学维度：论文出处与翻译说明，猫和狗各自使用独立行为锚点';
   return {
     title: '维度出处 · 猫狗性格志',
@@ -32,7 +23,6 @@ const MODEL_NAMES: Record<string, string> = {
 export default function DimensionsPage({ searchParams }: { searchParams: { species?: string } }) {
   const species: Species = searchParams.species === 'dog' ? 'dog' : 'cat';
   const data = getSpeciesData(species);
-  if (!data) return <SpeciesPreparing species={species} />;
 
   const sourceMap = new Map(data.dimensionSources.dimensions.map((d) => [d.id, d]));
 

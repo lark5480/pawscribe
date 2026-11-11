@@ -178,7 +178,7 @@ export default function ResultView({ code, species }: { code: string; species: S
     }
   }, [code, species, petId]);
 
-  if (!vector || !data) {
+  if (!vector) {
     return (
       <main id="main" tabIndex={-1} className="mx-auto max-w-2xl px-6 py-16 text-center">
         <h1 className="mb-4 text-2xl font-bold">结果不存在</h1>

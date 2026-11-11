@@ -7,8 +7,9 @@ import {
   validateSpecial,
   validateCompareAdvice,
   validateAnchors,
+  validateDimensionSources,
 } from '../../lib/engine/validator.ts';
-import type { DimensionAnchor } from '../../lib/engine/validator.ts';
+import type { DimensionAnchor, DimensionSources } from '../../lib/engine/validator.ts';
 import type { Question, SpecialTypeCopy, StressQuestion, TypeCopy } from '../../lib/engine/types.ts';
 
 const base = new URL('../../content/', import.meta.url);
@@ -24,10 +25,19 @@ const specialData = JSON.parse(readFileSync(new URL('special-cat.json', base), '
   fallback: SpecialTypeCopy;
 };
 const adviceData = JSON.parse(readFileSync(new URL('compare-advice.json', base), 'utf8')) as Record<string, { suggestion: string }>;
+const sourceData = JSON.parse(readFileSync(new URL('dimension-sources.json', base), 'utf8')) as DimensionSources;
 
 function readOptional<T>(name: string): T | null {
   const url = new URL(name, base);
   return existsSync(url) ? (JSON.parse(readFileSync(url, 'utf8')) as T) : null;
+}
+
+// 「待补文献」是显式的诚实标注：只报告数量，不作为错误拦截
+function pendingNote(data: DimensionSources): string {
+  const n =
+    data.dimensions.filter((d) => d.source.includes('待补文献')).length +
+    data.references.filter((r) => r.detail.includes('待补文献')).length;
+  return n === 0 ? '' : '；' + n + ' 处标注「待补文献」（显式标注，不拦截）';
 }
 
 const dogQuizData = readOptional<Question[]>('quiz-dog.json');
@@ -40,6 +50,7 @@ const dogStressData = readOptional<{
   levels: Array<{ level: string; label: string; text: string }>;
 }>('stress-dog.json');
 const dogAdviceData = readOptional<Record<string, { suggestion: string }>>('compare-advice-dog.json');
+const dogSourceData = readOptional<DimensionSources>('dimension-sources-dog.json');
 
 const quizErrors = validateQuiz(quizData);
 const copyErrors = validateCopy(copyData);
@@ -48,6 +59,7 @@ const stressErrors = validateStress(stressData.questions, stressData.levels, qui
 });
 const specialErrors = validateSpecial(specialData);
 const adviceErrors = validateCompareAdvice(adviceData);
+const sourceErrors = validateDimensionSources(sourceData);
 const dogQuizErrors = dogQuizData ? validateQuiz(dogQuizData, CAT_SPECIFIC_WORDS) : [];
 const dogAnchorErrors = dogAnchorsData ? validateAnchors(dogAnchorsData.dimensions) : [];
 const dogCopyErrors = dogCopyData
@@ -61,6 +73,7 @@ const dogStressErrors = dogStressData
     })
   : [];
 const dogAdviceErrors = dogAdviceData ? validateCompareAdvice(dogAdviceData, CAT_SPECIFIC_WORDS) : [];
+const dogSourceErrors = dogSourceData ? validateDimensionSources(dogSourceData) : [];
 
 console.log('=== 题库校验 ===');
 if (quizErrors.length === 0) console.log('OK：45 题全部通过');
@@ -81,6 +94,13 @@ else specialErrors.forEach(e => console.log('ERROR:', e));
 console.log('\n=== 比较建议校验 ===');
 if (adviceErrors.length === 0) console.log('OK：' + Object.keys(adviceData).length + ' 维比较建议通过：' + Object.keys(adviceData).join(' / '));
 else adviceErrors.forEach(e => console.log('ERROR:', e));
+
+console.log('\n=== 猫册维度出处校验 ===');
+if (sourceErrors.length === 0) {
+  console.log('OK：15 维出处与 ' + sourceData.references.length + ' 条引用文献齐备' + pendingNote(sourceData));
+} else {
+  sourceErrors.forEach(e => console.log('ERROR:', e));
+}
 
 console.log('\n=== 狗册题库校验 ===');
 if (!dogQuizData) {
@@ -139,6 +159,15 @@ if (!dogAdviceData) {
   dogAdviceErrors.forEach(e => console.log('ERROR:', e));
 }
 
+console.log('\n=== 狗册维度出处校验 ===');
+if (!dogSourceData) {
+  console.log('SKIP：content/dimension-sources-dog.json 不存在');
+} else if (dogSourceErrors.length === 0) {
+  console.log('OK：15 维出处与 ' + dogSourceData.references.length + ' 条引用文献齐备' + pendingNote(dogSourceData));
+} else {
+  dogSourceErrors.forEach(e => console.log('ERROR:', e));
+}
+
 console.log('\n=== 狗册资产清单 ===');
 const dogAssets: Array<[string, boolean, string]> = [
   ['quiz-dog.json', dogQuizData !== null, '45 题'],
@@ -152,8 +181,8 @@ for (const [name, ready, desc] of dogAssets) {
   console.log((ready ? 'READY ' : 'MISSING ') + name + '（' + desc + '）');
 }
 const dogMissing = dogAssets.filter(([, ready]) => !ready).map(([name]) => name);
-if (dogMissing.length > 0) console.log('狗册仍关闭：缺少 ' + dogMissing.join('、'));
-else console.log('狗册资产齐备，可接入数据层');
+if (dogMissing.length > 0) console.log('狗册资产缺失：' + dogMissing.join('、'));
+else console.log('狗册资产齐备');
 
 const allErrors = [
   ...quizErrors,
@@ -161,11 +190,13 @@ const allErrors = [
   ...stressErrors,
   ...specialErrors,
   ...adviceErrors,
+  ...sourceErrors,
   ...dogQuizErrors,
   ...dogAnchorErrors,
   ...dogCopyErrors,
   ...dogSpecialErrors,
   ...dogStressErrors,
   ...dogAdviceErrors,
+  ...dogSourceErrors,
 ];
 if (allErrors.length > 0) process.exit(1);
